@@ -1,0 +1,6 @@
+{
+  nodes(filter: {
+    schemaName: "folder",
+    language: { eq: "de" }
+  })
+}
