@@ -1,6 +1,10 @@
 {
   nodes(filter: {
-    schemaName: "folder",
-    language: { eq: "de" }
+    or: [{
+        schemaName: "folder"
+    },
+    {
+        language: "en"
+    }]
   })
 }

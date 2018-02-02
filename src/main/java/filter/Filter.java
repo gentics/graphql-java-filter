@@ -1,18 +1,28 @@
 package filter;
 
 
+import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputType;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static graphql.Scalars.GraphQLString;
+import static graphql.schema.GraphQLInputObjectField.newInputObjectField;
 
 public interface Filter<T> {
     String getName();
     String getDescription();
     Predicate<T> createPredicate(Object query);
-    GraphQLInputType createType();
+    GraphQLInputType getType();
+
+    default GraphQLInputObjectField toObjectField() {
+        return newInputObjectField()
+            .name(getName())
+            .description(getDescription())
+            .type(getType())
+            .build();
+    }
 
     static <T> Filter<T> stringField(String name, String description, Function<T, String> stringProvider) {
         return new Filter<T>() {
@@ -32,7 +42,7 @@ public interface Filter<T> {
             }
 
             @Override
-            public GraphQLInputType createType() {
+            public GraphQLInputType getType() {
                 return GraphQLString;
             }
         };
