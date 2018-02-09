@@ -1,4 +1,4 @@
-import filter.Filters;
+import filter.NodeFilter;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.GraphQLError;
@@ -31,10 +31,10 @@ public class Runner {
             .name("root")
             .field(newFieldDefinition()
                 .name("nodes")
-                .argument(newArgument().name("filter").type(Filters.NODE_FILTER.getType()).build())
+                .argument(newArgument().name("filter").type(NodeFilter.filter().getType()).build())
                 .type(GraphQLList.list(GraphQLString))
                 .dataFetcher(x -> {
-                    Predicate<Node> p = Filters.NODE_FILTER.createPredicate(x.getArgument("filter"));
+                    Predicate<Node> p = NodeFilter.filter().createPredicate(x.getArgument("filter"));
                     return nodes
                         .filter(p)
                         .collect(Collectors.toList());
@@ -45,6 +45,7 @@ public class Runner {
         GraphQL build = GraphQL.newGraphQL(newSchema().query(root).build()).build();
         String query = getQuery();
         ExecutionResult executionResult = build.execute(query);
+
 
         List<GraphQLError> errors = executionResult.getErrors();
         if (executionResult.getErrors().size() > 0) {

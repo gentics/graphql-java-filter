@@ -1,10 +1,8 @@
 {
   nodes(filter: {
-    or: [{
-        schemaName: "folder"
-    },
-    {
-        language: "en"
-    }]
+    and: [
+        {schemaName: { eq: "folder" }},
+        {language: { oneOf: ["en", "de"]}}
+    ]
   })
 }
