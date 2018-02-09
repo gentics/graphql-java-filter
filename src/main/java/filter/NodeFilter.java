@@ -63,6 +63,12 @@ public class NodeFilter implements Filter<Node, Map<String, Object>> {
                 } else if (entry.getKey().equals("or")) {
                     Filter<Node, Object> filter = (Filter<Node, Object>) commonFilters.get("or");
                     return filter.createPredicate(entry.getValue());
+                } else if (entry.getKey().equals("and")) {
+                    Filter<Node, Object> filter = (Filter<Node, Object>) commonFilters.get("and");
+                    return filter.createPredicate(entry.getValue());
+                } else if (entry.getKey().equals("not")) {
+                    Filter<Node, Object> filter = (Filter<Node, Object>) commonFilters.get("not");
+                    return filter.createPredicate(entry.getValue());
                 } else {
                     throw new InvalidParameterException();
                 }

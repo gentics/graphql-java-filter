@@ -1,7 +1,7 @@
 {
   nodes(filter: {
     and: [
-        {schemaName: { eq: "folder" }},
+        {not: {schemaName: { regex: "lder$" }}},
         {language: { oneOf: ["en", "de"]}}
     ]
   })
