@@ -1,8 +1,0 @@
-{
-  nodes(filter: {
-    and: [
-        {not: {schemaName: { regex: "lder$" }}},
-        {language: { oneOf: ["en", "de"]}}
-    ]
-  })
-}
