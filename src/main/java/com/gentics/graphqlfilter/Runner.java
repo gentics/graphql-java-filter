@@ -1,10 +1,12 @@
-import filter.NodeFilter;
+package com.gentics.graphqlfilter;
+
+import com.gentics.graphqlfilter.filter.example.NodeFilter;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.GraphQLError;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
-import model.Node;
+import com.gentics.graphqlfilter.model.Node;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -31,10 +33,10 @@ public class Runner {
             .name("root")
             .field(newFieldDefinition()
                 .name("nodes")
-                .argument(newArgument().name("filter").type(NodeFilter.filter().getType()).build())
+                .argument(newArgument().name("com/gentics/graphqlfilter/filter").type(NodeFilter.filter().getType()).build())
                 .type(GraphQLList.list(GraphQLString))
                 .dataFetcher(x -> {
-                    Predicate<Node> p = NodeFilter.filter().createPredicate(x.getArgument("filter"));
+                    Predicate<Node> p = NodeFilter.filter().createPredicate(x.getArgument("com/gentics/graphqlfilter/filter"));
                     return nodes
                         .filter(p)
                         .collect(Collectors.toList());

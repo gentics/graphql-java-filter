@@ -1,0 +1,5 @@
+{
+  nodes(filter: {
+    language: {eq: "de"}
+  })
+}

@@ -1,7 +1,6 @@
-package filter;
+package com.gentics.graphqlfilter.filter;
 
 import graphql.schema.GraphQLInputType;
-import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLTypeReference;
 
 import java.util.Arrays;
@@ -10,16 +9,16 @@ import java.util.function.Predicate;
 
 public class CommonFilters {
 
-    public static <T> List<Filter<T, ?>> createFor(Filter<T, ?> filter) {
+    public static <T> List<FilterField<T, ?>> createFor(Filter<T, ?> filter, GraphQLTypeReference type) {
         return Arrays.asList(
-            orFilter(filter),
-            andFilter(filter),
-            notFilter(filter)
+            orFilter(filter, type),
+            andFilter(filter, type),
+            notFilter(filter, type)
         );
     }
 
-    private static <T, Q> Filter<T, List<Q>> orFilter(Filter<T, Q> filter) {
-        return new Filter<T, List<Q>>() {
+    private static <T, Q> FilterField<T, List<Q>> orFilter(Filter<T, Q> filter, GraphQLInputType type) {
+        return new FilterField<T, List<Q>>() {
             @Override
             public String getName() {
                 return "or";
@@ -27,7 +26,7 @@ public class CommonFilters {
 
             @Override
             public String getDescription() {
-                return "Combines multiple " + filter.getName() + " with logical OR";
+                return "Applies if any filters match.";
             }
 
             @Override
@@ -40,13 +39,13 @@ public class CommonFilters {
 
             @Override
             public GraphQLInputType getType() {
-                return GraphQLList.list(GraphQLTypeReference.typeRef(filter.getName()));
+                return type;
             }
         };
     }
 
-    private static <T, Q> Filter<T, List<Q>> andFilter(Filter<T, Q> filter) {
-        return new Filter<T, List<Q>>() {
+    private static <T, Q> FilterField<T, List<Q>> andFilter(Filter<T, Q> filter, GraphQLInputType type) {
+        return new FilterField<T, List<Q>>() {
             @Override
             public String getName() {
                 return "and";
@@ -54,7 +53,7 @@ public class CommonFilters {
 
             @Override
             public String getDescription() {
-                return "Combines multiple " + filter.getName() + " with logical AND";
+                return "Applies if all filters match.";
             }
 
             @Override
@@ -67,13 +66,13 @@ public class CommonFilters {
 
             @Override
             public GraphQLInputType getType() {
-                return GraphQLList.list(GraphQLTypeReference.typeRef(filter.getName()));
+                return type;
             }
         };
     }
 
-    private static <T, Q> Filter<T, Q> notFilter(Filter<T, Q> filter) {
-        return new Filter<T, Q>() {
+    private static <T, Q> FilterField<T, Q> notFilter(Filter<T, Q> filter, GraphQLInputType type) {
+        return new FilterField<T, Q>() {
             @Override
             public String getName() {
                 return "not";
@@ -81,7 +80,7 @@ public class CommonFilters {
 
             @Override
             public String getDescription() {
-                return "Negates a " + filter.getName();
+                return "Negates a filter.";
             }
 
             @Override
@@ -91,7 +90,7 @@ public class CommonFilters {
 
             @Override
             public GraphQLInputType getType() {
-                return GraphQLTypeReference.typeRef(filter.getName());
+                return type;
             }
         };
     }

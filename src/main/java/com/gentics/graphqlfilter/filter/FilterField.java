@@ -1,8 +1,6 @@
-package filter;
-
+package com.gentics.graphqlfilter.filter;
 
 import graphql.schema.GraphQLInputObjectField;
-import graphql.schema.GraphQLInputObjectType;
 import graphql.schema.GraphQLInputType;
 
 import java.util.function.Function;
@@ -10,15 +8,10 @@ import java.util.function.Predicate;
 
 import static graphql.schema.GraphQLInputObjectField.newInputObjectField;
 
-public interface Filter<T, Q> {
+public interface FilterField<T, Q> extends Filter<T, Q> {
     String getName();
 
     String getDescription();
-
-    // TODO Make predicate input type parameterizable
-    Predicate<T> createPredicate(Q query);
-
-    GraphQLInputType getType();
 
     default GraphQLInputObjectField toObjectField() {
         return newInputObjectField()
@@ -28,8 +21,8 @@ public interface Filter<T, Q> {
             .build();
     }
 
-    static <T, Q> Filter<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate) {
-        return new Filter<T, Q>() {
+    static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate) {
+        return new FilterField<T, Q>() {
             @Override
             public String getName() {
                 return name;

@@ -1,4 +1,4 @@
-package model;
+package com.gentics.graphqlfilter.model;
 
 import java.time.Instant;
 
