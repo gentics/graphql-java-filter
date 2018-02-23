@@ -1,10 +1,6 @@
-package com.gentics.graphqlfilter.test.filter;
+package com.gentics.mesh.graphqlfilter.filter;
 
-import com.gentics.graphqlfilter.filter.FilterField;
-import com.gentics.graphqlfilter.filter.MainFilter;
-import com.gentics.graphqlfilter.filter.MappedFilter;
-import com.gentics.graphqlfilter.filter.StringFilter;
-import com.gentics.graphqlfilter.test.model.Schema;
+import com.gentics.mesh.graphqlfilter.model.Schema;
 import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLInputType;
 

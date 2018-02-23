@@ -1,4 +1,4 @@
-package com.gentics.graphqlfilter.test.util;
+package com.gentics.mesh.graphqlfilter.util;
 
 import org.apache.commons.io.IOUtils;
 

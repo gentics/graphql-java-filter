@@ -1,9 +1,6 @@
-package com.gentics.graphqlfilter.test.filter;
+package com.gentics.mesh.graphqlfilter.filter;
 
-import com.gentics.graphqlfilter.filter.MainFilter;
-import com.gentics.graphqlfilter.filter.MappedFilter;
-import com.gentics.graphqlfilter.filter.StringFilter;
-import com.gentics.graphqlfilter.test.model.Node;
+import com.gentics.mesh.graphqlfilter.model.Node;
 
 import java.util.Arrays;
 

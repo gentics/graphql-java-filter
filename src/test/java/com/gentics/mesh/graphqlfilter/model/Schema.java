@@ -1,4 +1,4 @@
-package com.gentics.graphqlfilter.test.model;
+package com.gentics.mesh.graphqlfilter.model;
 
 public class Schema {
     private final String uuid;

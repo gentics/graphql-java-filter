@@ -1,15 +1,15 @@
-package com.gentics.graphqlfilter.test;
+package com.gentics.mesh.graphqlfilter;
 
-import com.gentics.graphqlfilter.test.filter.NodeFilter;
-import com.gentics.graphqlfilter.test.model.Schemas;
-import com.gentics.graphqlfilter.test.util.QueryFile;
+import com.gentics.mesh.graphqlfilter.filter.NodeFilter;
+import com.gentics.mesh.graphqlfilter.model.Schemas;
+import com.gentics.mesh.graphqlfilter.util.QueryFile;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.GraphQLError;
 import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
-import com.gentics.graphqlfilter.test.model.Node;
+import com.gentics.mesh.graphqlfilter.model.Node;
 import org.junit.Before;
 
 import java.time.Instant;

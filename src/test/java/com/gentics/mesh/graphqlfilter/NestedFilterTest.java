@@ -1,6 +1,6 @@
-package com.gentics.graphqlfilter.test;
+package com.gentics.mesh.graphqlfilter;
 
-import com.gentics.graphqlfilter.test.util.QueryFile;
+import com.gentics.mesh.graphqlfilter.util.QueryFile;
 import graphql.ExecutionResult;
 import graphql.GraphQLError;
 import graphql.validation.ValidationError;
@@ -16,7 +16,7 @@ public class NestedFilterTest extends AbstractFilterTest {
     public void testEnum() {
         List<Map<String, ?>> nodes = queryNodesAsList(new QueryFile("nested", "enum"));
         assertEquals(1, nodes.size());
-        assertEquals("2", nodes.get(0).get("id"));
+        assertEquals("1f9c42ed-506d-481d-b31e-1a9466e31a81", nodes.get(0).get("uuid"));
     }
 
     @Test
@@ -32,6 +32,6 @@ public class NestedFilterTest extends AbstractFilterTest {
     public void testSchemaUuid() {
         List<Map<String, ?>> nodes = queryNodesAsList(new QueryFile("nested", "schemaUuid"));
         assertEquals(1, nodes.size());
-        assertEquals("2", nodes.get(0).get("id"));
+        assertEquals("1f9c42ed-506d-481d-b31e-1a9466e31a81", nodes.get(0).get("uuid"));
     }
 }

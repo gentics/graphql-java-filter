@@ -1,4 +1,4 @@
-package com.gentics.graphqlfilter.filter;
+package com.gentics.mesh.graphqlfilter.filter;
 
 import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLTypeReference;

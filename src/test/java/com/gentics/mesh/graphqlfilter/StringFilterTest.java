@@ -1,6 +1,6 @@
-package com.gentics.graphqlfilter.test;
+package com.gentics.mesh.graphqlfilter;
 
-import com.gentics.graphqlfilter.test.util.QueryFile;
+import com.gentics.mesh.graphqlfilter.util.QueryFile;
 import org.junit.Test;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class StringFilterTest extends AbstractFilterTest {
         List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "eq"));
 
         assertEquals(1, result.size());
-        assertEquals("1", result.get(0).get("id"));
+        assertEquals("e018fa14-39ed-431c-b09d-b27097b48b85", result.get(0).get("uuid"));
     }
 
     @Test
