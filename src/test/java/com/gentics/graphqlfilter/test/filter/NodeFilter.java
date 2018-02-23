@@ -1,9 +1,9 @@
-package com.gentics.graphqlfilter.filter.example;
+package com.gentics.graphqlfilter.test.filter;
 
 import com.gentics.graphqlfilter.filter.MainFilter;
 import com.gentics.graphqlfilter.filter.MappedFilter;
 import com.gentics.graphqlfilter.filter.StringFilter;
-import com.gentics.graphqlfilter.model.Node;
+import com.gentics.graphqlfilter.test.model.Node;
 
 import java.util.Arrays;
 
@@ -20,8 +20,8 @@ public class NodeFilter extends MainFilter<Node> {
 
     private NodeFilter() {
         super("NodeFilter", "Filters Nodes", Arrays.asList(
-            new MappedFilter<>("schemaName", "Filters by Schema name", StringFilter.filter(), Node::getSchemaName),
-            new MappedFilter<>("language", "Filters by language", StringFilter.filter(), Node::getLanguage)
+            new MappedFilter<>("schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
+            new MappedFilter<>("language", "Filters by Language", StringFilter.filter(), Node::getLanguage)
         ));
     }
 }

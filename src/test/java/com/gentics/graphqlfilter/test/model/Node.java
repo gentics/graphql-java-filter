@@ -1,20 +1,18 @@
-package com.gentics.graphqlfilter.model;
+package com.gentics.graphqlfilter.test.model;
 
 import java.time.Instant;
 
 public class Node {
-    private final String schemaName;
+    private final int id;
+    private final Schema schema;
     private final Instant created;
     private final String language;
 
-    public Node(String schemaName, Instant created, String language) {
-        this.schemaName = schemaName;
+    public Node(int id, Schema schema, Instant created, String language) {
+        this.id = id;
+        this.schema = schema;
         this.created = created;
         this.language = language;
-    }
-
-    public String getSchemaName() {
-        return schemaName;
     }
 
     public Instant getCreated() {
@@ -25,10 +23,19 @@ public class Node {
         return language;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public Schema getSchema() {
+        return schema;
+    }
+
     @Override
     public String toString() {
         return "Node{" +
-            "schemaName='" + schemaName + '\'' +
+            "id=" + id +
+            ", schema=" + schema +
             ", created=" + created +
             ", language='" + language + '\'' +
             '}';

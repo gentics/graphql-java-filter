@@ -1,21 +1,28 @@
 package com.gentics.graphqlfilter.test;
 
-import com.gentics.graphqlfilter.filter.example.NodeFilter;
+import com.gentics.graphqlfilter.test.filter.NodeFilter;
+import com.gentics.graphqlfilter.test.model.Schema;
 import com.gentics.graphqlfilter.test.util.QueryFile;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.GraphQLError;
+import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
-import com.gentics.graphqlfilter.model.Node;
+import com.gentics.graphqlfilter.test.model.Node;
+import graphql.schema.GraphQLType;
+import graphql.schema.GraphQLTypeUtil;
 import org.junit.Before;
 
+import javax.management.Query;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static graphql.Scalars.GraphQLID;
 import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLArgument.newArgument;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
@@ -29,12 +36,21 @@ public class AbstractFilterTest {
     @Before
     public void setupGraphQl() {
 
+        GraphQLObjectType nodeType = GraphQLObjectType.newObject()
+            .name("node")
+            .field(GraphQLFieldDefinition.newFieldDefinition()
+                .name("id")
+                .type(GraphQLID)
+                .dataFetcher(x -> x.<Node>getSource().getId())
+                .build())
+            .build();
+
         GraphQLObjectType root = GraphQLObjectType.newObject()
             .name("root")
             .field(newFieldDefinition()
                 .name("nodes")
                 .argument(newArgument().name("filter").type(NodeFilter.filter().getType()).build())
-                .type(GraphQLList.list(GraphQLString))
+                .type(GraphQLList.list(nodeType))
                 .dataFetcher(x -> {
                     Predicate<Node> p = NodeFilter.filter().createPredicate(x.getArgument("filter"));
                     return testData().stream()
@@ -48,9 +64,10 @@ public class AbstractFilterTest {
     }
 
     private List<Node> testData() {
+
         return Arrays.asList(
-            new Node("folder", Instant.ofEpochSecond(1517583296), "de"),
-            new Node("vehicle", Instant.ofEpochSecond(1417583296), "en")
+            new Node(1, new Schema("folder"), Instant.ofEpochSecond(1517583296), "de"),
+            new Node(2, new Schema("content"), Instant.ofEpochSecond(1417583296), "en")
         );
     }
 
@@ -74,5 +91,10 @@ public class AbstractFilterTest {
 
     protected ExecutionResult queryNodes(QueryFile query, boolean assertSuccess) {
         return queryNodes(query.getQuery(), assertSuccess);
+    }
+
+    protected List<Map<String, ?>> queryNodesAsList(QueryFile query) {
+        Map<String, List<Map<String, ?>>> result = queryNodes(query).getData();
+        return result.get("nodes");
     }
 }

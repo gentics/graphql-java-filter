@@ -1,13 +1,19 @@
 package com.gentics.graphqlfilter.test;
 
 import com.gentics.graphqlfilter.test.util.QueryFile;
-import graphql.ExecutionResult;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class StringFilterTest extends AbstractFilterTest {
     @Test
     public void testEquals() {
-        ExecutionResult result = queryNodes(new QueryFile("string", "eq"));
-        Object data = result.getData();
+        List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "eq"));
+
+        assertEquals(1, result.size());
+        assertEquals("1", result.get(0).get("id"));
     }
 }
