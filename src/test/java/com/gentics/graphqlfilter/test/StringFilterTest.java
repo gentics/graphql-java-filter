@@ -16,4 +16,11 @@ public class StringFilterTest extends AbstractFilterTest {
         assertEquals(1, result.size());
         assertEquals("1", result.get(0).get("id"));
     }
+
+    @Test
+    public void testOneOf() {
+        List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "oneOf"));
+
+        assertEquals(2, result.size());
+    }
 }

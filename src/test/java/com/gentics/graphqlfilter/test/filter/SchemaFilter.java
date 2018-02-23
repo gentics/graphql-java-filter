@@ -24,6 +24,7 @@ public class SchemaFilter extends MainFilter<Schema> {
     private SchemaFilter() {
         super("SchemaFilter", "Filters schemas", Arrays.asList(
             new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Schema::getName),
+            new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
             FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(), name -> schema -> schema.getName().equals(name))
         ));
     }

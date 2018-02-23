@@ -27,4 +27,11 @@ public class NestedFilterTest extends AbstractFilterTest {
         ValidationError validationError = (ValidationError) error;
         assertEquals("WrongType", validationError.getValidationErrorType().name());
     }
+
+    @Test
+    public void testSchemaUuid() {
+        List<Map<String, ?>> nodes = queryNodesAsList(new QueryFile("nested", "schemaUuid"));
+        assertEquals(1, nodes.size());
+        assertEquals("2", nodes.get(0).get("id"));
+    }
 }

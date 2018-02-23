@@ -2,6 +2,6 @@
   nodes(filter: {
     schema: {is: content}
   }) {
-    id
+    uuid
   }
 }

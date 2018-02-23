@@ -20,6 +20,7 @@ public class NodeFilter extends MainFilter<Node> {
 
     private NodeFilter() {
         super("NodeFilter", "Filters Nodes", Arrays.asList(
+            new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
             new MappedFilter<>("schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
             new MappedFilter<>("language", "Filters by Language", StringFilter.filter(), Node::getLanguage)
         ));

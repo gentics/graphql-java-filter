@@ -2,6 +2,6 @@
   nodes(filter: {
     language: {eq: "de"}
   }) {
-    id
+    uuid
   }
 }

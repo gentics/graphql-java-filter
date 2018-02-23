@@ -1,7 +1,7 @@
 package com.gentics.graphqlfilter.test;
 
 import com.gentics.graphqlfilter.test.filter.NodeFilter;
-import com.gentics.graphqlfilter.test.model.Schema;
+import com.gentics.graphqlfilter.test.model.Schemas;
 import com.gentics.graphqlfilter.test.util.QueryFile;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
@@ -10,11 +10,8 @@ import graphql.schema.GraphQLFieldDefinition;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import com.gentics.graphqlfilter.test.model.Node;
-import graphql.schema.GraphQLType;
-import graphql.schema.GraphQLTypeUtil;
 import org.junit.Before;
 
-import javax.management.Query;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +20,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static graphql.Scalars.GraphQLID;
-import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLArgument.newArgument;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLSchema.newSchema;
@@ -39,9 +35,9 @@ public class AbstractFilterTest {
         GraphQLObjectType nodeType = GraphQLObjectType.newObject()
             .name("node")
             .field(GraphQLFieldDefinition.newFieldDefinition()
-                .name("id")
+                .name("uuid")
                 .type(GraphQLID)
-                .dataFetcher(x -> x.<Node>getSource().getId())
+                .dataFetcher(x -> x.<Node>getSource().getUuid())
                 .build())
             .build();
 
@@ -66,8 +62,8 @@ public class AbstractFilterTest {
     private List<Node> testData() {
 
         return Arrays.asList(
-            new Node(1, new Schema("folder"), Instant.ofEpochSecond(1517583296), "de"),
-            new Node(2, new Schema("content"), Instant.ofEpochSecond(1417583296), "en")
+            new Node("e018fa14-39ed-431c-b09d-b27097b48b85", Schemas.FOLDER, Instant.ofEpochSecond(1517583296), "de"),
+            new Node("1f9c42ed-506d-481d-b31e-1a9466e31a81", Schemas.CONTENT, Instant.ofEpochSecond(1417583296), "en")
         );
     }
 

@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    schema: {uuid: {eq: "fb7dd7fe-ba28-4775-ba7a-c5b87a412a7b"}}
+  }) {
+    uuid
+  }
+}

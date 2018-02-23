@@ -3,13 +3,13 @@ package com.gentics.graphqlfilter.test.model;
 import java.time.Instant;
 
 public class Node {
-    private final int id;
+    private final String uuid;
     private final Schema schema;
     private final Instant created;
     private final String language;
 
-    public Node(int id, Schema schema, Instant created, String language) {
-        this.id = id;
+    public Node(String uuid, Schema schema, Instant created, String language) {
+        this.uuid = uuid;
         this.schema = schema;
         this.created = created;
         this.language = language;
@@ -23,8 +23,8 @@ public class Node {
         return language;
     }
 
-    public int getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
     public Schema getSchema() {
@@ -34,7 +34,7 @@ public class Node {
     @Override
     public String toString() {
         return "Node{" +
-            "id=" + id +
+            "uuid=" + uuid +
             ", schema=" + schema +
             ", created=" + created +
             ", language='" + language + '\'' +
