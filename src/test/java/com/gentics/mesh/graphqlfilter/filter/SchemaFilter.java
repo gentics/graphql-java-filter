@@ -5,6 +5,7 @@ import graphql.schema.GraphQLEnumType;
 import graphql.schema.GraphQLInputType;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class SchemaFilter extends MainFilter<Schema> {
 
@@ -18,11 +19,7 @@ public class SchemaFilter extends MainFilter<Schema> {
     }
 
     private SchemaFilter() {
-        super("SchemaFilter", "Filters schemas", Arrays.asList(
-            new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Schema::getName),
-            new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
-            FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(), name -> schema -> schema.getName().equals(name))
-        ));
+        super("SchemaFilter", "Filters schemas");
     }
 
     private static GraphQLInputType getSchemaEnum() {
@@ -31,5 +28,14 @@ public class SchemaFilter extends MainFilter<Schema> {
             .value("folder", "folder")
             .value("content", "content")
             .build();
+    }
+
+    @Override
+    protected List<FilterField<Schema, ?>> getFilters() {
+        return Arrays.asList(
+            new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Schema::getName),
+            new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
+            FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(), name -> schema -> schema.getName().equals(name))
+        );
     }
 }

@@ -3,6 +3,7 @@ package com.gentics.mesh.graphqlfilter.filter;
 import com.gentics.mesh.graphqlfilter.model.Node;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class NodeFilter extends MainFilter<Node> {
 
@@ -16,10 +17,15 @@ public class NodeFilter extends MainFilter<Node> {
     }
 
     private NodeFilter() {
-        super("NodeFilter", "Filters Nodes", Arrays.asList(
+        super("NodeFilter", "Filters Nodes");
+    }
+
+    @Override
+    protected List<FilterField<Node, ?>> getFilters() {
+        return Arrays.asList(
             new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
             new MappedFilter<>("schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
             new MappedFilter<>("language", "Filters by Language", StringFilter.filter(), Node::getLanguage)
-        ));
+        );
     }
 }

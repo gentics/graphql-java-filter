@@ -13,13 +13,14 @@ import java.util.stream.Stream;
 
 import static graphql.schema.GraphQLInputObjectType.newInputObject;
 
-public abstract class MainFilter<T> implements Filter<T, Map<String, Object>> {
+public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 
     private final Map<String, FilterField<T, ?>> filters;
     private final GraphQLInputType type;
 
-    public MainFilter(String name, String description, List<FilterField<T, ?>> filters) {
+    public MainFilter(String name, String description) {
         List<FilterField<T, ?>> commonFilters = CommonFilters.createFor(this, GraphQLTypeReference.typeRef(name));
+        List<FilterField<T, ?>> filters = getFilters();
 
         this.filters = Stream.concat(
             commonFilters.stream(),
@@ -33,13 +34,15 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, Object>> {
             .build();
     }
 
+    protected abstract List<FilterField<T, ?>> getFilters();
+
     @Override
     public GraphQLInputType getType() {
         return type;
     }
 
     @Override
-    public Predicate<T> createPredicate(Map<String, Object> query) {
+    public Predicate<T> createPredicate(Map<String, ?> query) {
         return query.entrySet().stream()
             .map(entry -> {
                 Filter filter = filters.get(entry.getKey());

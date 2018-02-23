@@ -20,10 +20,15 @@ public class StringFilter extends MainFilter<String> {
     }
 
     private StringFilter() {
-        super("StringFilter", "Filters Strings", Arrays.asList(
+        super("StringFilter", "Filters Strings");
+    }
+
+    @Override
+    protected List<FilterField<String, ?>> getFilters() {
+        return Arrays.asList(
             FilterField.create("eq", "Compares two strings for equality", GraphQLString, query -> query::equals),
             FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings", GraphQLList.list(GraphQLString), query -> query::contains),
             FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, query -> Pattern.compile(query).asPredicate())
-        ));
+        );
     }
 }
