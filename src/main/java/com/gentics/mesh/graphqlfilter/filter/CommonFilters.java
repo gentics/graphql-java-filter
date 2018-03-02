@@ -1,6 +1,7 @@
 package com.gentics.mesh.graphqlfilter.filter;
 
 import graphql.schema.GraphQLInputType;
+import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLTypeReference;
 
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public class CommonFilters {
 
             @Override
             public GraphQLInputType getType() {
-                return type;
+                return GraphQLList.list(type);
             }
         };
     }
@@ -66,7 +67,7 @@ public class CommonFilters {
 
             @Override
             public GraphQLInputType getType() {
-                return type;
+                return GraphQLList.list(type);
             }
         };
     }
