@@ -8,10 +8,16 @@ import java.util.regex.Pattern;
 
 import static graphql.Scalars.GraphQLString;
 
+/**
+ * Filters strings by various means
+ */
 public class StringFilter extends MainFilter<String> {
 
     private static StringFilter instance;
 
+    /**
+     * Get the singleton string filter
+     */
     public static StringFilter filter() {
         if (instance == null) {
             instance = new StringFilter();
@@ -26,7 +32,7 @@ public class StringFilter extends MainFilter<String> {
     @Override
     protected List<FilterField<String, ?>> getFilters() {
         return Arrays.asList(
-            FilterField.create("eq", "Compares two strings for equality", GraphQLString, query -> query::equals),
+            FilterField.create("equals", "Compares two strings for equality", GraphQLString, query -> query::equals),
             FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings", GraphQLList.list(GraphQLString), query -> query::contains),
             FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, query -> Pattern.compile(query).asPredicate())
         );

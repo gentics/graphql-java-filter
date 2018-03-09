@@ -8,8 +8,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * Creates common filters for a type. This is used in {@link MainFilter} to combine multiple filters.
+ */
 public class CommonFilters {
 
+    /**
+     * Creates the following filters for the provided type:
+     * <ul>
+     *     <li>and</li>
+     *     <li>or</li>
+     *     <li>not</li>
+     * </ul>
+     *
+     * @param filter The filter to create types for
+     * @param type The reference type of the filter. We can't use the actual type since this would lead to an endless recursion.
+     * @param <T> The input type of the predicate
+     */
     public static <T> List<FilterField<T, ?>> createFor(Filter<T, ?> filter, GraphQLTypeReference type) {
         return Arrays.asList(
             orFilter(filter, type),

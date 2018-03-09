@@ -14,11 +14,26 @@ import java.util.stream.Stream;
 
 import static graphql.schema.GraphQLInputObjectType.newInputObject;
 
+/**
+ * A nested filter that provides various fields to refine the predicate.
+ *
+ * This filter always has the {@link CommonFilters} included.
+ *
+ * @param <T> The predicate input type
+ */
 public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 
+    // We need lazy evaluation here because we need to set the filters and type in the constructor,
+    // without having to fear infinite recursion when reusing a filter in itself.
     private final Lazy<Map<String, FilterField<T, ?>>> filters;
     private final Lazy<GraphQLInputType> type;
 
+    /**
+     * Creates a new main filter
+     *
+     * @param name the name of the filter (must be unique across all filters used)
+     * @param description the description of the filter
+     */
     public MainFilter(String name, String description) {
         this.filters = new Lazy<>(() -> {
             List<FilterField<T, ?>> commonFilters = CommonFilters.createFor(this, GraphQLTypeReference.typeRef(name));
@@ -38,6 +53,9 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
         );
     }
 
+    /**
+     * Gets a list of filters to be used available in this filter
+     */
     protected abstract List<FilterField<T, ?>> getFilters();
 
     @Override
