@@ -1,0 +1,10 @@
+{
+  nodes(filter: {
+    created: {
+      after: "2018-03-01",
+      before: "2018-03-03"
+    }
+  }) {
+    name
+  }
+}

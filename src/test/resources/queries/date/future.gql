@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    created: {isFuture: true}
+  }) {
+    name
+  }
+}

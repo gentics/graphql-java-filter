@@ -1,16 +1,14 @@
 package com.gentics.mesh.graphqlfilter.model;
 
-import java.time.Instant;
-
 public class Node {
     private final String uuid;
     private final Schema schema;
-    private final Instant created;
+    private final String created;
     private final String language;
     private final String name;
     private final boolean published;
 
-    public Node(String uuid, Schema schema, Instant created, String language, String name, boolean published) {
+    public Node(String uuid, Schema schema, String created, String language, String name, boolean published) {
         this.uuid = uuid;
         this.schema = schema;
         this.created = created;
@@ -19,7 +17,7 @@ public class Node {
         this.published = published;
     }
 
-    public Instant getCreated() {
+    public String getCreated() {
         return created;
     }
 

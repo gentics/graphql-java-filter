@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    created: {equals: "2018-03-01"}
+  }) {
+    name
+  }
+}
