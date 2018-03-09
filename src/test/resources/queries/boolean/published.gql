@@ -1,0 +1,8 @@
+{
+  nodes(filter: {
+    published: true
+  }) {
+    name
+    published
+  }
+}

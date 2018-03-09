@@ -26,7 +26,8 @@ public class NodeFilter extends MainFilter<Node> {
             new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
             new MappedFilter<>("schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
             new MappedFilter<>("language", "Filters by Language", StringFilter.filter(), Node::getLanguage),
-            new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Node::getName)
+            new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Node::getName),
+            new MappedFilter<>("published", "Filters by published state", BooleanFilter.filter(), Node::isPublished)
         );
     }
 }
