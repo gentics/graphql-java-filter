@@ -58,4 +58,13 @@ public class DateFilterTest extends AbstractFilterTest {
 
         assertEquals(testData.size(), result.size());
     }
+
+    @Test
+    public void testFormat() {
+        List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "format"));
+
+        assertEquals(2, result.size());
+        assertEquals("Tree: Oak", result.get(0).get("name"));
+        assertEquals("Fruit: Apple", result.get(1).get("name"));
+    }
 }
