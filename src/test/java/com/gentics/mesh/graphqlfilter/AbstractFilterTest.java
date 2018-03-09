@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static graphql.Scalars.GraphQLID;
+import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLArgument.newArgument;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLSchema.newSchema;
@@ -28,6 +29,17 @@ import static org.junit.Assert.assertEquals;
 public class AbstractFilterTest {
 
     private GraphQL graphQL;
+
+    protected final List<Node> testData;
+
+    public AbstractFilterTest() {
+        testData = Arrays.asList(
+            new Node("e018fa14-39ed-431c-b09d-b27097b48b85", Schemas.FOLDER, Instant.ofEpochSecond(1517583296), "de", "images"),
+            new Node("1f9c42ed-506d-481d-b31e-1a9466e31a81", Schemas.CONTENT, Instant.ofEpochSecond(1417583296), "en", "Tree: Pine"),
+            new Node("e240763a-089f-4a25-82bd-d94d63fd45da", Schemas.CONTENT, Instant.ofEpochSecond(1417583296), "en", "Tree: Oak"),
+            new Node("9352efb8-9546-4239-bde5-c85fe9163d8e", Schemas.CONTENT, Instant.ofEpochSecond(1417583296), "en", "Fruit: Apple")
+        );
+    }
 
     @Before
     public void setupGraphQl() {
@@ -39,6 +51,11 @@ public class AbstractFilterTest {
                 .type(GraphQLID)
                 .dataFetcher(x -> x.<Node>getSource().getUuid())
                 .build())
+            .field(GraphQLFieldDefinition.newFieldDefinition()
+                .name("name")
+                .type(GraphQLString)
+                .dataFetcher(x -> x.<Node>getSource().getName())
+                .build())
             .build();
 
         GraphQLObjectType root = GraphQLObjectType.newObject()
@@ -49,7 +66,7 @@ public class AbstractFilterTest {
                 .type(GraphQLList.list(nodeType))
                 .dataFetcher(x -> {
                     Predicate<Node> p = NodeFilter.filter().createPredicate(x.getArgument("filter"));
-                    return testData().stream()
+                    return testData.stream()
                         .filter(p)
                         .collect(Collectors.toList());
                 })
@@ -57,14 +74,6 @@ public class AbstractFilterTest {
             .build();
 
         this.graphQL = GraphQL.newGraphQL(newSchema().query(root).build()).build();
-    }
-
-    private List<Node> testData() {
-
-        return Arrays.asList(
-            new Node("e018fa14-39ed-431c-b09d-b27097b48b85", Schemas.FOLDER, Instant.ofEpochSecond(1517583296), "de"),
-            new Node("1f9c42ed-506d-481d-b31e-1a9466e31a81", Schemas.CONTENT, Instant.ofEpochSecond(1417583296), "en")
-        );
     }
 
     protected ExecutionResult queryNodes(String query) {

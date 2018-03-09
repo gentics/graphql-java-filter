@@ -74,6 +74,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
                 return (Predicate<T>) filter.createPredicate(entry.getValue());
             })
             .reduce(Predicate::and)
+            //
             .orElse(ignore -> true);
     }
 }

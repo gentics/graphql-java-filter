@@ -1,6 +1,6 @@
 {
   nodes(filter: {
-    language: {eq: "de"}
+    and: []
   }) {
     uuid
   }

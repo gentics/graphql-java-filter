@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 public class StringFilterTest extends AbstractFilterTest {
     @Test
     public void testEquals() {
-        List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "eq"));
+        List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "equals"));
 
         assertEquals(1, result.size());
         assertEquals("e018fa14-39ed-431c-b09d-b27097b48b85", result.get(0).get("uuid"));

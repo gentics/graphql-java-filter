@@ -1,0 +1,10 @@
+{
+  nodes(filter: {
+    or: [
+      {uuid: {equals: "1f9c42ed-506d-481d-b31e-1a9466e31a81"}},
+      {uuid: {equals: "e018fa14-39ed-431c-b09d-b27097b48b85"}}
+    ]
+  }) {
+    uuid
+  }
+}
