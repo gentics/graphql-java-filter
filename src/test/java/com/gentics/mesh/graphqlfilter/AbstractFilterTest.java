@@ -1,5 +1,6 @@
 package com.gentics.mesh.graphqlfilter;
 
+import com.gentics.mesh.graphqlfilter.filter.DateFilter;
 import com.gentics.mesh.graphqlfilter.filter.NodeFilter;
 import com.gentics.mesh.graphqlfilter.model.Node;
 import com.gentics.mesh.graphqlfilter.model.Schemas;
@@ -12,6 +13,7 @@ import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import org.junit.Before;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -34,10 +36,18 @@ public class AbstractFilterTest {
 
     public AbstractFilterTest() {
         testData = Arrays.asList(
-            new Node("e018fa14-39ed-431c-b09d-b27097b48b85", Schemas.FOLDER, "2018-03-01", "de", "images", true),
-            new Node("1f9c42ed-506d-481d-b31e-1a9466e31a81", Schemas.CONTENT, "2018-03-02", "en", "Tree: Pine", true),
-            new Node("e240763a-089f-4a25-82bd-d94d63fd45da", Schemas.CONTENT, "2018-03-05T00:30:00+02:00", "en", "Tree: Oak", false),
-            new Node("9352efb8-9546-4239-bde5-c85fe9163d8e", Schemas.CONTENT, "2018-03-05T00:30:00+01:00", "en", "Fruit: Apple", true)
+            new Node("e018fa14-39ed-431c-b09d-b27097b48b85", Schemas.FOLDER,
+                DateFilter.parseDate("2018-03-01").toEpochMilli(),
+                "de", "images", true),
+            new Node("1f9c42ed-506d-481d-b31e-1a9466e31a81", Schemas.CONTENT,
+                DateFilter.parseDate("2018-03-02").toEpochMilli(),
+                "en", "Tree: Pine", true),
+            new Node("e240763a-089f-4a25-82bd-d94d63fd45da", Schemas.CONTENT,
+                DateFilter.parseDate("2018-03-05T00:30:00+02:00").toEpochMilli(),
+                "en", "Tree: Oak", false),
+            new Node("9352efb8-9546-4239-bde5-c85fe9163d8e", Schemas.CONTENT,
+                DateFilter.parseDate("2018-03-05T00:30:00+01:00").toEpochMilli(),
+                "en", "Fruit: Apple", true)
         );
     }
 

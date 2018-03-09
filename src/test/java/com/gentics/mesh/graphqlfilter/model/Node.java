@@ -3,12 +3,12 @@ package com.gentics.mesh.graphqlfilter.model;
 public class Node {
     private final String uuid;
     private final Schema schema;
-    private final String created;
+    private final Long created;
     private final String language;
     private final String name;
     private final boolean published;
 
-    public Node(String uuid, Schema schema, String created, String language, String name, boolean published) {
+    public Node(String uuid, Schema schema, Long created, String language, String name, boolean published) {
         this.uuid = uuid;
         this.schema = schema;
         this.created = created;
@@ -17,7 +17,7 @@ public class Node {
         this.published = published;
     }
 
-    public String getCreated() {
+    public Long getCreated() {
         return created;
     }
 
