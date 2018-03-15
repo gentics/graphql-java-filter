@@ -21,6 +21,7 @@ import static graphql.Scalars.GraphQLString;
 
 /**
  * Filters ISO-8601 strings by various means
+ * TODO: Consider using Instant instead of Long as predicate input type
  */
 public class DateFilter extends MainFilter<Long> {
 
@@ -43,10 +44,10 @@ public class DateFilter extends MainFilter<Long> {
     @Override
     protected List<FilterField<Long, ?>> getFilters() {
         return Arrays.asList(
-            FilterField.create("equals", "Compares two dates for equality.", GraphQLString, dateTimePredicate(Instant::equals)),
-            FilterField.create("oneOf", "Tests if the date is equal to one of the given dates", GraphQLList.list(GraphQLString), this::oneOf),
-            FilterField.create("after", "Tests if the date is after the given date.", GraphQLString, dateTimePredicate(Instant::isAfter)),
-            FilterField.create("before", "Tests if the date is before the given date.", GraphQLString, dateTimePredicate(Instant::isBefore)),
+            FilterField.create("equals", "Compares the date to the given ISO-8601 date for equality.", GraphQLString, dateTimePredicate(Instant::equals)),
+            FilterField.create("oneOf", "Tests if the date is equal to one of the given ISO-8601 dates.", GraphQLList.list(GraphQLString), this::oneOf),
+            FilterField.create("after", "Tests if the date is after the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isAfter)),
+            FilterField.create("before", "Tests if the date is before the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isBefore)),
             FilterField.<Long, Boolean>create("isFuture", "Tests if the date is in the future.", GraphQLBoolean, query -> date -> Instant.ofEpochMilli(date).isAfter(Instant.now()) == query),
             FilterField.<Long, Boolean>create("isPast", "Tests if the date is in the past.", GraphQLBoolean, query -> date -> Instant.ofEpochMilli(date).isBefore(Instant.now()) == query)
         );
