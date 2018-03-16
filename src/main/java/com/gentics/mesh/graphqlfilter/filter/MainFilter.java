@@ -5,6 +5,7 @@ import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLTypeReference;
 
 import java.security.InvalidParameterException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,14 +30,43 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
     private final Lazy<GraphQLInputType> type;
 
     /**
+     * Creates a new MainFilter.
+     * @param name the name of the filter (must be unique across all filters used)
+     * @param description the description of the filter
+     * @param filters a list of filters to be used that are available in this filter
+     */
+    public static <T> MainFilter<T> MainFilter(String name, String description, List<FilterField<T, ?>> filters) {
+        return MainFilter(name, description, filters, true);
+    }
+
+    /**
+     * Creates a new MainFilter.
+     * @param name the name of the filter (must be unique across all filters used)
+     * @param description the description of the filter
+     * @param filters a list of filters to be used that are available in this filter
+     * @param addCommonFilters set to false to prevent adding of common composition types
+     */
+    public static <T> MainFilter<T> MainFilter(String name, String description, List<FilterField<T, ?>> filters, boolean addCommonFilters) {
+        return new MainFilter<T>(name, description, addCommonFilters) {
+            @Override
+            protected List<FilterField<T, ?>> getFilters() {
+                return filters;
+            }
+        };
+    }
+
+    /**
      * Creates a new main filter
      *
      * @param name the name of the filter (must be unique across all filters used)
      * @param description the description of the filter
+     * @param addCommonFilters set to false to prevent adding of common composition types
      */
-    public MainFilter(String name, String description) {
+    public MainFilter(String name, String description, boolean addCommonFilters) {
         this.filters = new Lazy<>(() -> {
-            List<FilterField<T, ?>> commonFilters = CommonFilters.createFor(this, GraphQLTypeReference.typeRef(name));
+            List<FilterField<T, ?>> commonFilters = addCommonFilters ?
+                CommonFilters.createFor(this, GraphQLTypeReference.typeRef(name)) :
+                Collections.emptyList();
             List<FilterField<T, ?>> filters = getFilters();
 
             return Stream.concat(
@@ -54,7 +84,17 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
     }
 
     /**
-     * Gets a list of filters to be used available in this filter
+     * Creates a new main filter
+     *
+     * @param name the name of the filter (must be unique across all filters used)
+     * @param description the description of the filter
+     */
+    public MainFilter(String name, String description) {
+        this(name, description, true);
+    }
+
+    /**
+     * Gets a list of filters to be used that are available in this filter
      */
     protected abstract List<FilterField<T, ?>> getFilters();
 
@@ -74,7 +114,6 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
                 return (Predicate<T>) filter.createPredicate(entry.getValue());
             })
             .reduce(Predicate::and)
-            //
             .orElse(ignore -> true);
     }
 }
