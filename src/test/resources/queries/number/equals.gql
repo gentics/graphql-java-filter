@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    price: {equals: 10}
+  }) {
+    name
+  }
+}

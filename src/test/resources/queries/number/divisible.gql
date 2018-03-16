@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    price: {divisibleBy: 10}
+  }) {
+    name
+  }
+}

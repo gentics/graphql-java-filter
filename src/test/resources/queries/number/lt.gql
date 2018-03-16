@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    price: {lt: 30.5}
+  }) {
+    name
+  }
+}

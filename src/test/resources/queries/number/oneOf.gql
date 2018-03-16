@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    price: {oneOf: [10, 20]}
+  }) {
+    name
+  }
+}
