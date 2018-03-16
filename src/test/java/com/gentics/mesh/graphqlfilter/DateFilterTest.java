@@ -1,11 +1,8 @@
 package com.gentics.mesh.graphqlfilter;
 
 import com.gentics.mesh.graphqlfilter.util.QueryFile;
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 

@@ -1,19 +1,13 @@
 package com.gentics.mesh.graphqlfilter;
 
 import com.gentics.mesh.graphqlfilter.util.QueryFile;
-import graphql.ExecutionResult;
-import graphql.GraphQLError;
-import graphql.validation.ValidationError;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class CommonFilterTest extends AbstractFilterTest {
 

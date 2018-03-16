@@ -5,8 +5,6 @@ import graphql.schema.GraphQLInputType;
 
 import java.util.function.Predicate;
 
-import static com.gentics.mesh.graphqlfilter.util.FilterUtil.nullablePredicate;
-
 public class BooleanFilter implements Filter<Boolean, Boolean> {
 
     private static BooleanFilter instance;

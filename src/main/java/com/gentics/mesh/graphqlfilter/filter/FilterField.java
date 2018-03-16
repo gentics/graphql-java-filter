@@ -1,6 +1,5 @@
 package com.gentics.mesh.graphqlfilter.filter;
 
-import graphql.Scalars;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputType;
 

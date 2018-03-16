@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class QueryFile {
     public final String[] path;

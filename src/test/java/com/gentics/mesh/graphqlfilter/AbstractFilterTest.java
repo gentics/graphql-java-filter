@@ -13,7 +13,6 @@ import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import org.junit.Before;
 
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
