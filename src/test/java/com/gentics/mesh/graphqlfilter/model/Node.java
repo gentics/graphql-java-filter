@@ -6,9 +6,9 @@ public class Node {
     private final Long created;
     private final String language;
     private final String name;
-    private final boolean published;
+    private final Boolean published;
 
-    public Node(String uuid, Schema schema, Long created, String language, String name, boolean published) {
+    public Node(String uuid, Schema schema, Long created, String language, String name, Boolean published) {
         this.uuid = uuid;
         this.schema = schema;
         this.created = created;
@@ -37,7 +37,7 @@ public class Node {
         return name;
     }
 
-    public boolean isPublished() {
+    public Boolean isPublished() {
         return published;
     }
 

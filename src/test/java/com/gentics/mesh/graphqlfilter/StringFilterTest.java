@@ -23,4 +23,11 @@ public class StringFilterTest extends AbstractFilterTest {
 
         assertEquals(2, result.size());
     }
+
+    @Test
+    public void testRegex() {
+        List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "regex"));
+
+        assertEquals(2, result.size());
+    }
 }

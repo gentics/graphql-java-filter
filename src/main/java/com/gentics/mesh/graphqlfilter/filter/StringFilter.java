@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.gentics.mesh.graphqlfilter.util.FilterUtil.nullablePredicate;
 import static graphql.Scalars.GraphQLString;
 
 /**
@@ -32,9 +33,10 @@ public class StringFilter extends MainFilter<String> {
     @Override
     protected List<FilterField<String, ?>> getFilters() {
         return Arrays.asList(
+            FilterField.isNull(),
             FilterField.create("equals", "Compares two strings for equality", GraphQLString, query -> query::equals),
             FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings", GraphQLList.list(GraphQLString), query -> query::contains),
-            FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, query -> Pattern.compile(query).asPredicate())
+            FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, query -> nullablePredicate(Pattern.compile(query).asPredicate()))
         );
     }
 }

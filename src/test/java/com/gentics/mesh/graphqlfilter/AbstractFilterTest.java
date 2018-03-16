@@ -47,7 +47,8 @@ public class AbstractFilterTest {
                 "en", "Tree: Oak", false),
             new Node("9352efb8-9546-4239-bde5-c85fe9163d8e", Schemas.CONTENT,
                 DateFilter.parseDate("2018-03-05T00:30:00+01:00").toEpochMilli(),
-                "en", "Fruit: Apple", true)
+                "en", "Fruit: Apple", true),
+            new Node(null, Schemas.CONTENT, null, null, null, null)
         );
     }
 

@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.gentics.mesh.graphqlfilter.util.FilterUtil.nullablePredicate;
 import static graphql.Scalars.GraphQLBoolean;
 import static graphql.Scalars.GraphQLString;
 
@@ -44,19 +45,20 @@ public class DateFilter extends MainFilter<Long> {
     @Override
     protected List<FilterField<Long, ?>> getFilters() {
         return Arrays.asList(
+            FilterField.isNull(),
             FilterField.create("equals", "Compares the date to the given ISO-8601 date for equality.", GraphQLString, dateTimePredicate(Instant::equals)),
             FilterField.create("oneOf", "Tests if the date is equal to one of the given ISO-8601 dates.", GraphQLList.list(GraphQLString), this::oneOf),
             FilterField.create("after", "Tests if the date is after the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isAfter)),
             FilterField.create("before", "Tests if the date is before the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isBefore)),
-            FilterField.<Long, Boolean>create("isFuture", "Tests if the date is in the future.", GraphQLBoolean, query -> date -> Instant.ofEpochMilli(date).isAfter(Instant.now()) == query),
-            FilterField.<Long, Boolean>create("isPast", "Tests if the date is in the past.", GraphQLBoolean, query -> date -> Instant.ofEpochMilli(date).isBefore(Instant.now()) == query)
+            FilterField.<Long, Boolean>create("isFuture", "Tests if the date is in the future.", GraphQLBoolean, query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isAfter(Instant.now()) == query)),
+            FilterField.<Long, Boolean>create("isPast", "Tests if the date is in the past.", GraphQLBoolean, query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isBefore(Instant.now()) == query))
         );
     }
 
     private Function<String, Predicate<Long>> dateTimePredicate(BiPredicate<Instant, Instant> predicate) {
         return query -> {
             Instant queryDate = parseDate(query);
-            return date -> predicate.test(parseLong(date), queryDate);
+            return nullablePredicate(date -> predicate.test(parseLong(date), queryDate));
         };
     }
 
@@ -65,7 +67,7 @@ public class DateFilter extends MainFilter<Long> {
             .map(DateFilter::parseDate)
             .collect(Collectors.toSet());
 
-        return date -> dates.contains(parseLong(date));
+        return nullablePredicate(date -> dates.contains(parseLong(date)));
     }
 
     private Instant parseLong(Long date) {

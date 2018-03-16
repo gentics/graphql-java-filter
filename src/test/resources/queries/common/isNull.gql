@@ -1,0 +1,7 @@
+{
+  nodes(filter: {
+    name: {isNull: true}
+  }) {
+    uuid
+  }
+}

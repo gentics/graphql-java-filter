@@ -1,11 +1,13 @@
 package com.gentics.mesh.graphqlfilter.filter;
 
+import graphql.Scalars;
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputType;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static graphql.Scalars.GraphQLBoolean;
 import static graphql.schema.GraphQLInputObjectField.newInputObjectField;
 
 /**
@@ -31,6 +33,13 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
             .description(getDescription())
             .type(getType())
             .build();
+    }
+
+    /**
+     * A filter that tests if a value is null.
+     */
+    static <T> FilterField<T, Boolean> isNull() {
+        return create("isNull", "Tests if the value is null", GraphQLBoolean, query -> value -> query == (value == null));
     }
 
     /**

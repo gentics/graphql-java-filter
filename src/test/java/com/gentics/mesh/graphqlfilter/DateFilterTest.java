@@ -56,7 +56,7 @@ public class DateFilterTest extends AbstractFilterTest {
     public void testPast() {
         List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "past"));
 
-        assertEquals(testData.size(), result.size());
+        assertEquals(4, result.size());
     }
 
     @Test

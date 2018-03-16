@@ -69,4 +69,10 @@ public class CommonFilterTest extends AbstractFilterTest {
         List<Map<String, ?>> nodes = queryNodesAsList(new QueryFile("common", "or", "simple"));
         assertEquals(2, nodes.size());
     }
+
+    @Test
+    public void testIsNull() {
+        List<Map<String, ?>> nodes = queryNodesAsList(new QueryFile("common", "isNull"));
+        assertEquals(1, nodes.size());
+    }
 }

@@ -15,7 +15,7 @@ public class NestedFilterTest extends AbstractFilterTest {
     @Test
     public void testEnum() {
         List<Map<String, ?>> nodes = queryNodesAsList(new QueryFile("nested", "enum"));
-        assertEquals(3, nodes.size());
+        assertEquals(4, nodes.size());
     }
 
     @Test
@@ -30,6 +30,6 @@ public class NestedFilterTest extends AbstractFilterTest {
     @Test
     public void testSchemaUuid() {
         List<Map<String, ?>> nodes = queryNodesAsList(new QueryFile("nested", "schemaUuid"));
-        assertEquals(3, nodes.size());
+        assertEquals(4, nodes.size());
     }
 }

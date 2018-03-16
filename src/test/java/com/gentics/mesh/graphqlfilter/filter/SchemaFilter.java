@@ -7,6 +7,8 @@ import graphql.schema.GraphQLInputType;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.gentics.mesh.graphqlfilter.util.FilterUtil.nullablePredicate;
+
 public class SchemaFilter extends MainFilter<Schema> {
 
     private static SchemaFilter instance;
@@ -35,7 +37,7 @@ public class SchemaFilter extends MainFilter<Schema> {
         return Arrays.asList(
             new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Schema::getName),
             new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
-            FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(), name -> schema -> schema.getName().equals(name))
+            FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(), name -> nullablePredicate(schema -> schema.getName().equals(name)))
         );
     }
 }

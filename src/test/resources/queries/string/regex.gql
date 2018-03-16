@@ -1,0 +1,8 @@
+{
+  nodes(filter: {
+    name: {regex: "^Tree:"}
+  }) {
+    uuid
+    name
+  }
+}
