@@ -66,7 +66,7 @@ public class NumberFilterTest extends AbstractFilterTest {
     }
 
     @Test
-    public void testDivisble() {
+    public void testDivisible() {
         List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "divisible"));
 
         assertEquals(3, result.size());
