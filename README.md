@@ -17,7 +17,7 @@ See [AbstractFilterTest.java](src/test/java/com/gentics/mesh/graphqlfilter/Abstr
 
 ### Helper filters
 * `MainFilter` A filter that does not filter directly and instead contains a collection of other filters.
-* `StartMainFilter` Same as above but addtionally implements StartFilter.
+* `StartMainFilter` Same as above but additionally implements StartFilter.
 * `MappedFilter` Used to map a type into another type using another Filter
 * `CommonFilters` Provides common filters which can be used for all types. This includes these logical operations of filters: `and`, `or` and `not`.
 
