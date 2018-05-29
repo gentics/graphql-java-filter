@@ -19,7 +19,7 @@ public class StringFilter extends MainFilter<String> {
 	/**
 	 * Get the singleton string filter
 	 */
-	public static StringFilter filter() {
+	public static synchronized StringFilter filter() {
 		if (instance == null) {
 			instance = new StringFilter();
 		}

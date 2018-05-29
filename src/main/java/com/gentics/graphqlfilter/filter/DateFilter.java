@@ -32,7 +32,7 @@ public class DateFilter extends MainFilter<Long> {
 	/**
 	 * Filters ISO-8601 strings by various means
 	 */
-	public static DateFilter filter() {
+	public static synchronized DateFilter filter() {
 		if (instance == null) {
 			instance = new DateFilter();
 		}

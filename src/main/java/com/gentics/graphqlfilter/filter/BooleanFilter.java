@@ -12,7 +12,7 @@ public class BooleanFilter implements Filter<Boolean, Boolean> {
 	/**
 	 * Get the singleton boolean filter
 	 */
-	public static BooleanFilter filter() {
+	public static synchronized BooleanFilter filter() {
 		if (instance == null) {
 			instance = new BooleanFilter();
 		}

@@ -24,7 +24,7 @@ public class NumberFilter extends MainFilter<BigDecimal> {
 	/**
 	 * Get the singleton string filter
 	 */
-	public static NumberFilter filter() {
+	public static synchronized NumberFilter filter() {
 		if (instance == null) {
 			instance = new NumberFilter();
 		}

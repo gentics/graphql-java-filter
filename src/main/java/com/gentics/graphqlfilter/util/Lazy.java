@@ -30,7 +30,7 @@ public class Lazy<T> implements Supplier<T> {
 	 * @return a result
 	 */
 	@Override
-	public T get() {
+	public synchronized T get() {
 		if (value == null) {
 			value = supplier.get();
 		}

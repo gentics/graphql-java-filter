@@ -5,7 +5,7 @@
 
 	<groupId>com.gentics.graphqlfilter</groupId>
 	<artifactId>graphql-java-filter</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 
 	<parent>
 		<groupId>com.gentics</groupId>
