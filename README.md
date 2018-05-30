@@ -3,6 +3,37 @@ Enhance your GraphQL API with filters.
 
 Use this library to let the user filter through the results of a GraphQL query.
 
+## Live Demo
+[Here is an implementation of this library.](https://demo.getmesh.io/api/v1/demo/graphql/browser)
+
+Try this query:
+
+```graphql
+{
+  nodes(filter: {
+    schema: { is: vehicle },
+    fields: {
+      vehicle: {
+        price: {
+          lt: 2000000
+        }
+      }
+    }
+  }) {
+    elements {
+      fields {
+        ... on vehicle {
+          name
+          price
+        }
+      }
+    }
+  }
+}
+```
+
+Play around with the autocompletion to see whats possible.
+
 ## Usage
 Create your filter by implementing the `Filter` interface or by extending one of the predefined abstract filters. It is best to create your filter by composing the small predefined filters.
 
