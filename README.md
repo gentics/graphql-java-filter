@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/gentics/graphql-java-filter.svg)](https://jitpack.io/#gentics/graphql-java-filter)
+
 # GraphQL Filter
 Enhance your GraphQL API with filters.
 
