@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static com.gentics.graphqlfilter.util.FilterUtil.nullablePredicate;
-import static graphql.Scalars.GraphQLBigDecimal;
+import static graphql.scalars.java.JavaPrimitives.GraphQLBigDecimal;
 
 /**
  * Filters strings by various means

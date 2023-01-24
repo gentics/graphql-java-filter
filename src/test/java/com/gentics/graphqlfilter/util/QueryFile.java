@@ -1,12 +1,12 @@
 package com.gentics.graphqlfilter.util;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.IOUtils;
 
 public class QueryFile {
 	public final String[] path;
@@ -18,9 +18,7 @@ public class QueryFile {
 
 	public String getQuery() {
 		path[path.length - 1] = path[path.length - 1] + ".gql";
-		String path = Paths.get("/", flatten(
-			new String[] { "queries" },
-			this.path)).toString();
+		String path= join ("/queries/", flatten(this.path));
 		InputStream input = QueryFile.class.getResourceAsStream(path);
 		if (input == null) {
 			throw new RuntimeException(String.format("Could not find query %s", path));
@@ -36,5 +34,11 @@ public class QueryFile {
 		return Arrays.stream(values)
 			.flatMap(Arrays::stream)
 			.toArray(String[]::new);
+	}
+
+	private static String join(String root, String... segments) {
+		StringBuilder joined = new StringBuilder(root);
+		joined.append(Arrays.stream(segments).collect(Collectors.joining("/")));
+		return joined.toString();
 	}
 }
