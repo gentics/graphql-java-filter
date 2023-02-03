@@ -3,6 +3,8 @@ package com.gentics.graphqlfilter;
 import graphql.ExecutionResult;
 import graphql.GraphQLError;
 import graphql.validation.ValidationError;
+import graphql.validation.ValidationErrorType;
+
 import org.junit.Test;
 
 import com.gentics.graphqlfilter.util.QueryFile;
@@ -26,7 +28,7 @@ public class NestedFilterTest extends AbstractFilterTest {
 		assertEquals(1, result.getErrors().size());
 		GraphQLError error = result.getErrors().get(0);
 		ValidationError validationError = (ValidationError) error;
-		assertEquals("WrongType", validationError.getValidationErrorType().name());
+		assertEquals(ValidationErrorType.WrongType, validationError.getValidationErrorType());
 	}
 
 	@Test
