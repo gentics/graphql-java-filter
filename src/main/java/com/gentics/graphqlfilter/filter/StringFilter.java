@@ -1,13 +1,17 @@
 package com.gentics.graphqlfilter.filter;
 
-import graphql.schema.GraphQLList;
+import static com.gentics.graphqlfilter.util.FilterUtil.nullablePredicate;
+import static graphql.Scalars.GraphQLString;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static com.gentics.graphqlfilter.util.FilterUtil.nullablePredicate;
-import static graphql.Scalars.GraphQLString;
+import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
+import com.gentics.graphqlfilter.filter.sql.InPredicate;
+
+import graphql.schema.GraphQLList;
 
 /**
  * Filters strings by various means
@@ -34,10 +38,17 @@ public class StringFilter extends MainFilter<String> {
 	protected List<FilterField<String, ?>> getFilters() {
 		return Arrays.asList(
 			FilterField.isNull(),
-			FilterField.create("equals", "Compares two strings for equality", GraphQLString, query -> query::equals),
-			FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings",
-				GraphQLList.list(GraphQLString), query -> query::contains),
-			FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString,
-				query -> nullablePredicate(Pattern.compile(query).asPredicate())));
+			FilterField.create("equals", "Compares two strings for equality", GraphQLString, 
+					query -> query::equals, 
+					Optional.of((field, compared) -> new ComparisonPredicate<>("=", field, compared, true))),
+			FilterField.<String, String>create("contains", "Checks if the string contains the given substring.", GraphQLString, 
+					query -> nullablePredicate(input -> input.contains(query)),
+					Optional.empty()),
+			FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings", GraphQLList.list(GraphQLString), 
+					query -> query::contains,
+					Optional.of((field, compared) -> new InPredicate(field, compared, true))),
+			FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, 
+					query -> nullablePredicate(Pattern.compile(query).asPredicate()),
+					Optional.empty()));
 	}
 }

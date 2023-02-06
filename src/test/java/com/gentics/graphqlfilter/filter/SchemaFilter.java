@@ -1,18 +1,16 @@
 package com.gentics.graphqlfilter.filter;
 
-import com.gentics.graphqlfilter.filter.FilterField;
-import com.gentics.graphqlfilter.filter.MainFilter;
-import com.gentics.graphqlfilter.filter.MappedFilter;
-import com.gentics.graphqlfilter.filter.StringFilter;
-import com.gentics.graphqlfilter.model.Schema;
-
-import graphql.schema.GraphQLEnumType;
-import graphql.schema.GraphQLInputType;
-
 import static com.gentics.graphqlfilter.util.FilterUtil.nullablePredicate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
+import com.gentics.graphqlfilter.model.Schema;
+
+import graphql.schema.GraphQLEnumType;
+import graphql.schema.GraphQLInputType;
 
 public class SchemaFilter extends MainFilter<Schema> {
 
@@ -40,9 +38,10 @@ public class SchemaFilter extends MainFilter<Schema> {
 	@Override
 	protected List<FilterField<Schema, ?>> getFilters() {
 		return Arrays.asList(
-			new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Schema::getName),
-			new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
+			new MappedFilter<>("schema", "name", "Filters by name", StringFilter.filter(), Schema::getName),
+			new MappedFilter<>("schema", "uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
 			FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(),
-				name -> nullablePredicate(schema -> schema.getName().equals(name))));
+				name -> nullablePredicate(schema -> schema.getName().equals(name)), 
+				Optional.of((field, compared) -> new ComparisonPredicate<>("=", "schema.name", compared, true))));
 	}
 }

@@ -1,20 +1,25 @@
 package com.gentics.graphqlfilter.filter;
 
-import graphql.schema.GraphQLInputType;
-import graphql.schema.GraphQLTypeReference;
+import static graphql.schema.GraphQLInputObjectType.newInputObject;
 
 import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.gentics.graphqlfilter.filter.sql.AndPredicate;
+import com.gentics.graphqlfilter.filter.sql.CombinerPredicate;
+import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
 import com.gentics.graphqlfilter.util.Lazy;
 
-import static graphql.schema.GraphQLInputObjectType.newInputObject;
+import graphql.schema.GraphQLInputType;
+import graphql.schema.GraphQLTypeReference;
 
 /**
  * A nested filter that provides various fields to refine the predicate.
@@ -119,14 +124,25 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	@Override
 	public Predicate<T> createPredicate(Map<String, ?> query) {
 		return query.entrySet().stream()
-			.map(entry -> {
-				Filter filter = filters.get().get(entry.getKey());
-				if (filter == null) {
-					throw new InvalidParameterException(String.format("Filter %s not found", entry.getKey()));
-				}
-				return (Predicate<T>) filter.createPredicate(entry.getValue());
-			})
+			.map(entry -> (Predicate<T>) findFilter(entry.getKey()).orElseThrow(() -> new InvalidParameterException(String.format("Filter %s not found", entry.getKey()))).createPredicate(entry.getValue()))
 			.reduce(Predicate::and)
 			.orElse(ignore -> true);
+	}
+
+	@Override
+	public Optional<SqlPredicate> maybeGetSqlDefinition(String field, Map<String, ?> query) {
+		try {
+			return Optional.of(query.entrySet().stream()
+				.map(entry -> findFilter(entry.getKey()).orElseThrow(() -> new InvalidParameterException(String.format("SQL Filter %s not found", entry.getKey()))).maybeGetSqlDefinition(entry.getKey(), entry.getValue()))
+				.map(p -> p.orElseThrow(() -> new NoSuchElementException()))
+				.reduce((CombinerPredicate) new AndPredicate(), (and, p1) -> and.addPredicate(p1), (p1, p2) -> p1));
+		} catch (NoSuchElementException e) {
+			return Optional.empty();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public Optional<Filter<T, Object>> findFilter(String key) {
+		return Optional.ofNullable((Filter<T, Object>) filters.get().get(key));
 	}
 }

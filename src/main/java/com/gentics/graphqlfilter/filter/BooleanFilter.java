@@ -3,7 +3,11 @@ package com.gentics.graphqlfilter.filter;
 import graphql.Scalars;
 import graphql.schema.GraphQLInputType;
 
+import java.util.Optional;
 import java.util.function.Predicate;
+
+import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
+import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
 
 public class BooleanFilter implements Filter<Boolean, Boolean> {
 
@@ -27,5 +31,10 @@ public class BooleanFilter implements Filter<Boolean, Boolean> {
 	@Override
 	public Predicate<Boolean> createPredicate(Boolean query) {
 		return query::equals;
+	}
+
+	@Override
+	public Optional<SqlPredicate> maybeGetSqlDefinition(String field, Boolean query) {
+		return Optional.of(new ComparisonPredicate<>("=", field, query, false));
 	}
 }
