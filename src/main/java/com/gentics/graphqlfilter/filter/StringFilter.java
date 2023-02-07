@@ -25,13 +25,13 @@ public class StringFilter extends MainFilter<String> {
 	 */
 	public static synchronized StringFilter filter() {
 		if (instance == null) {
-			instance = new StringFilter();
+			instance = new StringFilter(Optional.empty());
 		}
 		return instance;
 	}
 
-	private StringFilter() {
-		super("StringFilter", "Filters Strings", false);
+	private StringFilter(Optional<String> ownerType) {
+		super("StringFilter", "Filters Strings", false, ownerType);
 	}
 
 	@Override

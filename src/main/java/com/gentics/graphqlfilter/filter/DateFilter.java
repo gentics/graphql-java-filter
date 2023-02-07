@@ -43,7 +43,7 @@ public class DateFilter extends MainFilter<Long> {
 	}
 
 	private DateFilter() {
-		super("DateFilter", "Filters Dates", false);
+		super("DateFilter", "Filters Dates", false, Optional.empty());
 	}
 
 	@Override

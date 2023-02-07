@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.gentics.graphqlfilter.model.Node;
 
+import graphql.com.google.common.base.Optional;
+
 public class NodeFilter extends MainFilter<Node> {
 
 	private static NodeFilter instance;
@@ -18,7 +20,7 @@ public class NodeFilter extends MainFilter<Node> {
 	}
 
 	private NodeFilter() {
-		super("NodeFilter", "Filters Nodes", false);
+		super("NodeFilter", "Filters Nodes", false, Optional.of(null));
 	}
 
 	@Override

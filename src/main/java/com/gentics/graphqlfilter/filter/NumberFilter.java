@@ -36,7 +36,7 @@ public class NumberFilter extends MainFilter<BigDecimal> {
 	}
 
 	private NumberFilter() {
-		super("NumberFilter", "Filters numbers", false);
+		super("NumberFilter", "Filters numbers", false, Optional.empty());
 	}
 
 	private static GraphQLInputType closeToType = GraphQLInputObjectType.newInputObject()

@@ -11,6 +11,7 @@ import com.gentics.graphqlfilter.filter.sql.CombinerPredicate;
 import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
 import com.gentics.graphqlfilter.filter.sql.NotPredicate;
 import com.gentics.graphqlfilter.filter.sql.OrPredicate;
+import com.gentics.graphqlfilter.filter.sql.SqlField;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
 
 import graphql.schema.GraphQLInputType;
@@ -70,7 +71,7 @@ public class CommonFilters {
 			}
 
 			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(List<Q> query, List<String> fields) {
+			public Optional<SqlPredicate> maybeGetSqlDefinition(List<Q> query, List<SqlField<?>> fields) {
 				try {
 					return Optional.of(query.stream()
 						.map(entry -> filter.maybeGetSqlDefinition(entry, fields))
@@ -79,6 +80,11 @@ public class CommonFilters {
 				} catch (NoSuchElementException e) {
 					return Optional.empty();
 				}
+			}
+
+			@Override
+			public Optional<String> getOwner() {
+				return Optional.empty();
 			}
 		};
 	}
@@ -109,7 +115,7 @@ public class CommonFilters {
 			}
 
 			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(List<Q> query, List<String> fields) {
+			public Optional<SqlPredicate> maybeGetSqlDefinition(List<Q> query, List<SqlField<?>> fields) {
 				try {
 					return Optional.of(query.stream()
 						.map(entry -> filter.maybeGetSqlDefinition(entry, fields))
@@ -118,6 +124,11 @@ public class CommonFilters {
 				} catch (NoSuchElementException e) {
 					return Optional.empty();
 				}
+			}
+
+			@Override
+			public Optional<String> getOwner() {
+				return Optional.empty();
 			}
 		};
 	}
@@ -146,8 +157,13 @@ public class CommonFilters {
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<String> fields) {
+			public Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<SqlField<?>> fields) {
 				return filter.maybeGetSqlDefinition(query, fields).filter(ComparisonPredicate.class::isInstance).map(p -> new NotPredicate<>((ComparisonPredicate<Q>) p));
+			}
+
+			@Override
+			public Optional<String> getOwner() {
+				return Optional.empty();
 			}
 		};
 	}

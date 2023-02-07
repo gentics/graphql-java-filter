@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.gentics.graphqlfilter.filter.sql.SqlField;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
 
 import graphql.schema.GraphQLInputType;
@@ -35,7 +36,9 @@ public interface Filter<T, Q> {
 	 */
 	Predicate<T> createPredicate(Q query);
 
-	default Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<String> field) {
+	Optional<String> getOwner();
+
+	default Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<SqlField<?>> field) {
 		return Optional.empty();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
+import com.gentics.graphqlfilter.filter.sql.SqlField;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
 
 import graphql.Scalars;
@@ -35,7 +36,12 @@ public class BooleanFilter implements Filter<Boolean, Boolean> {
 	}
 
 	@Override
-	public Optional<SqlPredicate> maybeGetSqlDefinition(Boolean query, List<String> fields) {
+	public Optional<SqlPredicate> maybeGetSqlDefinition(Boolean query, List<SqlField<?>> fields) {
 		return Optional.of(new ComparisonPredicate<>("=", fields, query, false));
+	}
+
+	@Override
+	public Optional<String> getOwner() {
+		return Optional.empty();
 	}
 }

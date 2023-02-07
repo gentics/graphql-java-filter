@@ -5,14 +5,14 @@ import java.util.stream.Collectors;
 
 public class ComparisonPredicate<Q> extends AbstractPredicate<Q> {
 
-	protected final List<String> fields;
+	protected final List<SqlField<?>> fields;
 	protected final String operator;
 
-	public ComparisonPredicate(String operator, List<String> fields, Q query, boolean escape) {
+	public ComparisonPredicate(String operator, List<SqlField<?>> fields, Q query, boolean escape) {
 		this(escape ? " ( %s %s '%s' ) " : " ( %s %s %s ) ", operator, fields, query);
 	}
 
-	protected ComparisonPredicate(String format, String operator, List<String> fields, Q query) {
+	protected ComparisonPredicate(String format, String operator, List<SqlField<?>> fields, Q query) {
 		super(format, query);
 		this.fields = fields;
 		this.operator = operator;
@@ -20,10 +20,10 @@ public class ComparisonPredicate<Q> extends AbstractPredicate<Q> {
 
 	@Override
 	public String getSqlString() {
-		return String.format(format, fields.stream().collect(Collectors.joining(".")), operator, String.valueOf(query));
+		return String.format(format, fields.stream().map(SqlField::getName).collect(Collectors.joining(".")), operator, String.valueOf(query));
 	}
 
-	public List<String> getFields() {
+	public List<SqlField<?>> getFields() {
 		return fields;
 	}
 

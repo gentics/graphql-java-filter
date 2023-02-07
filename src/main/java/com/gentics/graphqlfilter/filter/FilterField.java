@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.gentics.graphqlfilter.filter.sql.IsNullPredicate;
+import com.gentics.graphqlfilter.filter.sql.SqlField;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
 
 import graphql.schema.GraphQLInputObjectField;
@@ -63,7 +64,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	 * @param <Q>
 	 *            The Java type mapped from the GraphQL input type
 	 */
-	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<BiFunction<Q, List<String>, SqlPredicate>> createSqlPredicate) {
+	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<BiFunction<Q, List<SqlField<?>>, SqlPredicate>> createSqlPredicate) {
 		return new FilterField<T, Q>() {
 			@Override
 			public String getName() {
@@ -86,8 +87,13 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 			}
 
 			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<String> fields) {
+			public Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<SqlField<?>> fields) {
 				return createSqlPredicate.map(f -> f.apply(query, fields));
+			}
+
+			@Override
+			public Optional<String> getOwner() {
+				return Optional.empty();
 			}
 		};
 	}
