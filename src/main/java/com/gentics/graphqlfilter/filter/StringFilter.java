@@ -31,7 +31,7 @@ public class StringFilter extends MainFilter<String> {
 	}
 
 	private StringFilter() {
-		super("StringFilter", "Filters Strings");
+		super("StringFilter", "Filters Strings", false);
 	}
 
 	@Override
@@ -40,13 +40,13 @@ public class StringFilter extends MainFilter<String> {
 			FilterField.isNull(),
 			FilterField.create("equals", "Compares two strings for equality", GraphQLString, 
 					query -> query::equals, 
-					Optional.of((field, compared) -> new ComparisonPredicate<>("=", field, compared, true))),
+					Optional.of((query, fields) -> new ComparisonPredicate<>("=", fields, query, true))),
 			FilterField.<String, String>create("contains", "Checks if the string contains the given substring.", GraphQLString, 
 					query -> nullablePredicate(input -> input.contains(query)),
 					Optional.empty()),
 			FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings", GraphQLList.list(GraphQLString), 
 					query -> query::contains,
-					Optional.of((field, compared) -> new InPredicate(field, compared, true))),
+					Optional.of((query, fields) -> new InPredicate(fields, query, true))),
 			FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, 
 					query -> nullablePredicate(Pattern.compile(query).asPredicate()),
 					Optional.empty()));

@@ -43,7 +43,7 @@ public class DateFilter extends MainFilter<Long> {
 	}
 
 	private DateFilter() {
-		super("DateFilter", "Filters Dates");
+		super("DateFilter", "Filters Dates", false);
 	}
 
 	@Override
@@ -52,19 +52,19 @@ public class DateFilter extends MainFilter<Long> {
 			FilterField.isNull(),
 			FilterField.create("equals", "Compares the date to the given ISO-8601 date for equality.", GraphQLString,
 				dateTimePredicate(Instant::equals),
-				Optional.of((field, compared) -> new ComparisonPredicate<>("=", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>("=", fields, query, true))),
 			FilterField.create("oneOf", "Tests if the date is equal to one of the given ISO-8601 dates.", GraphQLList.list(GraphQLString),
-				this::oneOf, Optional.of((field, compared) -> new ComparisonPredicate<>("=", field, compared, true))),
+				this::oneOf, Optional.of((query, fields) -> new ComparisonPredicate<>("=", fields, query, true))),
 			FilterField.create("after", "Tests if the date is after the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isAfter),
-				Optional.of((field, compared) -> new ComparisonPredicate<>(">", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>(">", fields, query, true))),
 			FilterField.create("before", "Tests if the date is before the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isBefore),
-				Optional.of((field, compared) -> new ComparisonPredicate<>("<", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>("<", fields, query, true))),
 			FilterField.<Long, Boolean>create("isFuture", "Tests if the date is in the future.", GraphQLBoolean,
 				query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isAfter(Instant.now()) == query),
-				Optional.of((field, compared) -> new ComparisonPredicate<>(">", field, Instant.now(), true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>(">", fields, Instant.now(), true))),
 			FilterField.<Long, Boolean>create("isPast", "Tests if the date is in the past.", GraphQLBoolean,
 				query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isBefore(Instant.now()) == query),
-				Optional.of((field, compared) -> new ComparisonPredicate<>("<", field, Instant.now(), true))));
+				Optional.of((query, fields) -> new ComparisonPredicate<>("<", fields, Instant.now(), true))));
 	}
 
 	private Function<String, Predicate<Long>> dateTimePredicate(BiPredicate<Instant, Instant> predicate) {

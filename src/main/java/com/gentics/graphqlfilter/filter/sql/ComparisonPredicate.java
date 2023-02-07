@@ -1,27 +1,30 @@
 package com.gentics.graphqlfilter.filter.sql;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ComparisonPredicate<Q> extends AbstractPredicate<Q> {
 
-	protected final String field;
+	protected final List<String> fields;
 	protected final String operator;
 
-	public ComparisonPredicate(String operator, String field, Q query, boolean escape) {
-		this(escape ? " ( %s %s '%s' ) " : " ( %s %s %s ) ", operator, field, query);
+	public ComparisonPredicate(String operator, List<String> fields, Q query, boolean escape) {
+		this(escape ? " ( %s %s '%s' ) " : " ( %s %s %s ) ", operator, fields, query);
 	}
 
-	protected ComparisonPredicate(String format, String operator, String field, Q query) {
+	protected ComparisonPredicate(String format, String operator, List<String> fields, Q query) {
 		super(format, query);
-		this.field = field;
+		this.fields = fields;
 		this.operator = operator;
 	}
 
 	@Override
 	public String getSqlString() {
-		return String.format(format, field, operator, query.toString());
+		return String.format(format, fields.stream().collect(Collectors.joining(".")), operator, String.valueOf(query));
 	}
 
-	public String getField() {
-		return field;
+	public List<String> getFields() {
+		return fields;
 	}
 
 	public String getOperator() {

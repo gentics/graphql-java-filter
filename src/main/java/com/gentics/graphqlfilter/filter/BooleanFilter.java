@@ -1,13 +1,14 @@
 package com.gentics.graphqlfilter.filter;
 
-import graphql.Scalars;
-import graphql.schema.GraphQLInputType;
-
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
+
+import graphql.Scalars;
+import graphql.schema.GraphQLInputType;
 
 public class BooleanFilter implements Filter<Boolean, Boolean> {
 
@@ -34,7 +35,7 @@ public class BooleanFilter implements Filter<Boolean, Boolean> {
 	}
 
 	@Override
-	public Optional<SqlPredicate> maybeGetSqlDefinition(String field, Boolean query) {
-		return Optional.of(new ComparisonPredicate<>("=", field, query, false));
+	public Optional<SqlPredicate> maybeGetSqlDefinition(Boolean query, List<String> fields) {
+		return Optional.of(new ComparisonPredicate<>("=", fields, query, false));
 	}
 }

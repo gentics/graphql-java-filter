@@ -6,7 +6,6 @@ public abstract class AbstractPredicate<Q> implements SqlPredicate {
 	protected final Q query;
 
 	public AbstractPredicate(String format, Q query) {
-		super();
 		this.format = format;
 		this.query = query;
 	}

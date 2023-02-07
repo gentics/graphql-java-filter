@@ -18,19 +18,19 @@ public class NodeFilter extends MainFilter<Node> {
 	}
 
 	private NodeFilter() {
-		super("NodeFilter", "Filters Nodes");
+		super("NodeFilter", "Filters Nodes", false);
 	}
 
 	@Override
 	protected List<FilterField<Node, ?>> getFilters() {
 		return Arrays.asList(
-			new MappedFilter<>("node", "uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
-			new MappedFilter<>("node", "schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
-			new MappedFilter<>("node", "language", "Filters by Language", StringFilter.filter(), Node::getLanguage),
-			new MappedFilter<>("node", "name", "Filters by name", StringFilter.filter(), Node::getName),
-			new MappedFilter<>("node", "published", "Filters by published state", BooleanFilter.filter(), Node::isPublished),
-			new MappedFilter<>("node", "created", "Filters by creation date", DateFilter.filter(), Node::getCreated),
-			new MappedFilter<>("node", "price", "Filters by price", NumberFilter.filter(),
+			new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
+			new MappedFilter<>("schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
+			new MappedFilter<>("language", "Filters by Language", StringFilter.filter(), Node::getLanguage),
+			new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Node::getName),
+			new MappedFilter<>("published", "Filters by published state", BooleanFilter.filter(), Node::isPublished),
+			new MappedFilter<>("created", "Filters by creation date", DateFilter.filter(), Node::getCreated),
+			new MappedFilter<>("price", "Filters by price", NumberFilter.filter(),
 				node -> node.getPrice() == null ? null : new BigDecimal(node.getPrice().toString())));
 	}
 }

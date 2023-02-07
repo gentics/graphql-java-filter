@@ -36,7 +36,7 @@ public class NumberFilter extends MainFilter<BigDecimal> {
 	}
 
 	private NumberFilter() {
-		super("NumberFilter", "Filters numbers");
+		super("NumberFilter", "Filters numbers", false);
 	}
 
 	private static GraphQLInputType closeToType = GraphQLInputObjectType.newInputObject()
@@ -61,22 +61,22 @@ public class NumberFilter extends MainFilter<BigDecimal> {
 			FilterField.<BigDecimal, BigDecimal>create("equals",
 				"Compares two numbers for equality. Be careful when comparing floating point numbers, they might be not exact. In that case, use closeTo instead.",
 				GraphQLBigDecimal, query -> nullablePredicate(val -> val.compareTo(query) == 0),
-				Optional.of((field, compared) -> new ComparisonPredicate<>("=", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>("=", fields, query, true))),
 			FilterField.<BigDecimal, List<BigDecimal>>create("oneOf", "Tests if the number is equal to one of the given numbers",
 				GraphQLList.list(GraphQLBigDecimal), query -> nullablePredicate(val -> query.stream().anyMatch(v -> v.compareTo(val) == 0)),
-				Optional.of((field, compared) -> new InPredicate(field, compared, true))),
+				Optional.of((query, fields) -> new InPredicate(fields, query, true))),
 			FilterField.<BigDecimal, BigDecimal>create("gt", "Tests if the number is greater than the given number",
 				GraphQLBigDecimal, query -> nullablePredicate(val -> val.compareTo(query) > 0),
-				Optional.of((field, compared) -> new ComparisonPredicate<>(">", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>(">", fields, query, true))),
 			FilterField.<BigDecimal, BigDecimal>create("gte", "Tests if the number is greater than or equal to the given number",
 				GraphQLBigDecimal, query -> nullablePredicate(val -> val.compareTo(query) >= 0),
-				Optional.of((field, compared) -> new ComparisonPredicate<>(">=", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>(">=", fields, query, true))),
 			FilterField.<BigDecimal, BigDecimal>create("lt", "Tests if the number is less than the given number",
 				GraphQLBigDecimal, query -> nullablePredicate(val -> val.compareTo(query) < 0),
-				Optional.of((field, compared) -> new ComparisonPredicate<>("<", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>("<", fields, query, true))),
 			FilterField.<BigDecimal, BigDecimal>create("lte", "Tests if the number is less than or equal to the given number",
 				GraphQLBigDecimal, query -> nullablePredicate(val -> val.compareTo(query) <= 0),
-				Optional.of((field, compared) -> new ComparisonPredicate<>("<=", field, compared, true))),
+				Optional.of((query, fields) -> new ComparisonPredicate<>("<=", fields, query, true))),
 			FilterField.<BigDecimal, BigDecimal>create("divisibleBy", "Tests if the number is divisible by the given number",
 				GraphQLBigDecimal, query -> nullablePredicate(val -> val.remainder(query).compareTo(BigDecimal.ZERO) == 0),
 				Optional.empty()),

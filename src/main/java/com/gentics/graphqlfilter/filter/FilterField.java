@@ -3,6 +3,7 @@ package com.gentics.graphqlfilter.filter;
 import static graphql.Scalars.GraphQLBoolean;
 import static graphql.schema.GraphQLInputObjectField.newInputObjectField;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -43,7 +44,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	 * A filter that tests if a value is null.
 	 */
 	static <T> FilterField<T, Boolean> isNull() {
-		return create("isNull", "Tests if the value is null", GraphQLBoolean, query -> value -> query == (value == null), Optional.of((field, query) -> new IsNullPredicate(field, String.class.isInstance(query))));
+		return create("isNull", "Tests if the value is null", GraphQLBoolean, query -> value -> query == (value == null), Optional.of((query, fields) -> new IsNullPredicate(fields)));
 	}
 
 	/**
@@ -62,7 +63,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	 * @param <Q>
 	 *            The Java type mapped from the GraphQL input type
 	 */
-	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<BiFunction<String, Q, SqlPredicate>> createSqlPredicate) {
+	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<BiFunction<Q, List<String>, SqlPredicate>> createSqlPredicate) {
 		return new FilterField<T, Q>() {
 			@Override
 			public String getName() {
@@ -85,8 +86,8 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 			}
 
 			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(String field, Q query) {
-				return createSqlPredicate.map(f -> f.apply(field, query));
+			public Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<String> fields) {
+				return createSqlPredicate.map(f -> f.apply(query, fields));
 			}
 		};
 	}

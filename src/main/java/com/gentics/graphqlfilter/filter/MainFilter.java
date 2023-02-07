@@ -3,6 +3,7 @@ package com.gentics.graphqlfilter.filter;
 import static graphql.schema.GraphQLInputObjectType.newInputObject;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.stream.Stream;
 import com.gentics.graphqlfilter.filter.sql.AndPredicate;
 import com.gentics.graphqlfilter.filter.sql.CombinerPredicate;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
+import com.gentics.graphqlfilter.util.FilterUtil;
 import com.gentics.graphqlfilter.util.Lazy;
 
 import graphql.schema.GraphQLInputType;
@@ -35,6 +37,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	// without having to fear infinite recursion when reusing a filter in itself.
 	private final Lazy<Map<String, FilterField<T, ?>>> filters;
 	private final Lazy<GraphQLInputType> type;
+	private final boolean isTopLevel;
 
 	/**
 	 * Creates a new MainFilter.
@@ -81,7 +84,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	 * @param addCommonFilters
 	 *            set to false to prevent adding of common composition types
 	 */
-	public MainFilter(String name, String description, boolean addCommonFilters) {
+	public MainFilter(String name, String description, boolean addCommonFilters, boolean isTopLevel) {
+		this.isTopLevel = isTopLevel;
 		this.filters = new Lazy<>(() -> {
 			List<FilterField<T, ?>> commonFilters = addCommonFilters ? CommonFilters.createFor(this, GraphQLTypeReference.typeRef(name))
 				: Collections.emptyList();
@@ -91,7 +95,6 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 				commonFilters.stream(),
 				filters.stream()).collect(Collectors.toMap(FilterField::getName, Function.identity()));
 		});
-
 		type = new Lazy<>(() -> newInputObject()
 			.name(name)
 			.description(description)
@@ -107,8 +110,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	 * @param description
 	 *            the description of the filter
 	 */
-	public MainFilter(String name, String description) {
-		this(name, description, true);
+	public MainFilter(String name, String description, boolean isTopLevel) {
+		this(name, description, true, isTopLevel);
 	}
 
 	/**
@@ -130,10 +133,10 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	}
 
 	@Override
-	public Optional<SqlPredicate> maybeGetSqlDefinition(String field, Map<String, ?> query) {
+	public Optional<SqlPredicate> maybeGetSqlDefinition(Map<String, ?> query, List<String> fields) {
 		try {
 			return Optional.of(query.entrySet().stream()
-				.map(entry -> findFilter(entry.getKey()).orElseThrow(() -> new InvalidParameterException(String.format("SQL Filter %s not found", entry.getKey()))).maybeGetSqlDefinition(entry.getKey(), entry.getValue()))
+				.map(entry -> findFilter(entry.getKey()).orElseThrow(() -> new InvalidParameterException(String.format("SQL Filter %s not found", entry.getKey()))).maybeGetSqlDefinition(entry.getValue(), isTopLevel ? FilterUtil.addFluent(new ArrayList<>(fields), entry.getKey()) : fields))
 				.map(p -> p.orElseThrow(() -> new NoSuchElementException()))
 				.reduce((CombinerPredicate) new AndPredicate(), (and, p1) -> and.addPredicate(p1), (p1, p2) -> p1));
 		} catch (NoSuchElementException e) {
