@@ -1,15 +1,12 @@
 package com.gentics.graphqlfilter.filter;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.gentics.graphqlfilter.filter.sql.SqlField;
-import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
-import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
 import com.gentics.graphqlfilter.filter.sql2.FilterOperation;
+import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
 
 import graphql.schema.GraphQLInputType;
 
@@ -71,11 +68,6 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	@Override
 	public GraphQLInputType getType() {
 		return delegate.getType();
-	}
-
-	@Override
-	public Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<SqlField<?>> fields) {
-		return delegate.maybeGetSqlDefinition(query, fields);
 	}
 
 	@Override

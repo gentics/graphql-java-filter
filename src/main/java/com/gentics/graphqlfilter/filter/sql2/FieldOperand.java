@@ -1,5 +1,7 @@
 package com.gentics.graphqlfilter.filter.sql2;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 public class FieldOperand<T> implements FilterOperand<String> {
@@ -35,5 +37,10 @@ public class FieldOperand<T> implements FilterOperand<String> {
 
 	public T getOwner() {
 		return owner;
+	}
+
+	@Override
+	public Map<String, String> getJoins(Map<String, String> parent) {
+		return Collections.singletonMap(String.valueOf(owner), field);
 	}
 }

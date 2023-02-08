@@ -1,5 +1,8 @@
 package com.gentics.graphqlfilter.filter.sql2;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class LiteralOperand<T> implements FilterOperand<T> {
 
 	private final boolean escape;
@@ -23,5 +26,10 @@ public class LiteralOperand<T> implements FilterOperand<T> {
 	@Override
 	public String toString() {
 		return "LiteralOperand [escape=" + escape + ", value=" + value + "]";
+	}
+
+	@Override
+	public Map<String, String> getJoins(Map<String, String> parent) {
+		return Collections.emptyMap();
 	}
 }

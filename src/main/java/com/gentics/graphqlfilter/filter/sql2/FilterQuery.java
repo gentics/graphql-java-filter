@@ -33,4 +33,9 @@ public class FilterQuery<O, Q> {
 	public LiteralOperand<Q> makeValueOperand(boolean escape) {
 		return new LiteralOperand<>(query, escape);
 	}
+
+	@Override
+	public String toString() {
+		return "FilterQuery [owner=" + owner + ", query=" + query + ", field=" + field + "]";
+	}
 }

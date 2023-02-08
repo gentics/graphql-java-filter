@@ -2,17 +2,8 @@ package com.gentics.graphqlfilter.filter;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import com.gentics.graphqlfilter.filter.sql.AndPredicate;
-import com.gentics.graphqlfilter.filter.sql.CombinerPredicate;
-import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
-import com.gentics.graphqlfilter.filter.sql.NotPredicate;
-import com.gentics.graphqlfilter.filter.sql.OrPredicate;
-import com.gentics.graphqlfilter.filter.sql.SqlField;
-import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
 
 import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLList;
@@ -71,18 +62,6 @@ public class CommonFilters {
 			}
 
 			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(List<Q> query, List<SqlField<?>> fields) {
-				try {
-					return Optional.of(query.stream()
-						.map(entry -> filter.maybeGetSqlDefinition(entry, fields))
-						.map(p -> p.orElseThrow(() -> new NoSuchElementException()))
-						.reduce((CombinerPredicate) new OrPredicate(), (and, p1) -> and.addPredicate(p1), (p1, p2) -> p1));
-				} catch (NoSuchElementException e) {
-					return Optional.empty();
-				}
-			}
-
-			@Override
 			public Optional<String> getOwner() {
 				return Optional.empty();
 			}
@@ -115,18 +94,6 @@ public class CommonFilters {
 			}
 
 			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(List<Q> query, List<SqlField<?>> fields) {
-				try {
-					return Optional.of(query.stream()
-						.map(entry -> filter.maybeGetSqlDefinition(entry, fields))
-						.map(p -> p.orElseThrow(() -> new NoSuchElementException()))
-						.reduce((CombinerPredicate) new AndPredicate(), (and, p1) -> and.addPredicate(p1), (p1, p2) -> p1));
-				} catch (NoSuchElementException e) {
-					return Optional.empty();
-				}
-			}
-
-			@Override
 			public Optional<String> getOwner() {
 				return Optional.empty();
 			}
@@ -153,12 +120,6 @@ public class CommonFilters {
 			@Override
 			public GraphQLInputType getType() {
 				return type;
-			}
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public Optional<SqlPredicate> maybeGetSqlDefinition(Q query, List<SqlField<?>> fields) {
-				return filter.maybeGetSqlDefinition(query, fields).filter(ComparisonPredicate.class::isInstance).map(p -> new NotPredicate<>((ComparisonPredicate<Q>) p));
 			}
 
 			@Override
