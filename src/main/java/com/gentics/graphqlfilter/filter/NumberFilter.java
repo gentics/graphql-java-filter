@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.gentics.graphqlfilter.filter.sql2.Comparison;
+import com.gentics.graphqlfilter.filter.operation.Comparison;
 
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputObjectType;

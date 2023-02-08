@@ -1,4 +1,4 @@
-package com.gentics.graphqlfilter.filter.sql2;
+package com.gentics.graphqlfilter.filter.operation;
 
 public interface ComparisonOperation extends FilterOperation<FilterOperand<?>> {
 	public static final String SQL_FORMAT = " ( %s %s %s ) ";

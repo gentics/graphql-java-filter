@@ -1,4 +1,4 @@
-package com.gentics.graphqlfilter.filter.sql2;
+package com.gentics.graphqlfilter.filter.operation;
 
 import java.util.Collections;
 import java.util.Map;

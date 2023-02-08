@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.gentics.graphqlfilter.model.Node;
 
+import graphql.util.Pair;
 
 public class NodeFilter extends MainFilter<Node> {
 
@@ -26,13 +27,13 @@ public class NodeFilter extends MainFilter<Node> {
 	@Override
 	protected List<FilterField<Node, ?>> getFilters() {
 		return Arrays.asList(
-			new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
-			new MappedFilter<>("schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
-			new MappedFilter<>("language", "Filters by Language", StringFilter.filter(), Node::getLanguage),
-			new MappedFilter<>("name", "Filters by name", StringFilter.filter(), Node::getName),
-			new MappedFilter<>("published", "Filters by published state", BooleanFilter.filter(), Node::isPublished),
-			new MappedFilter<>("created", "Filters by creation date", DateFilter.filter(), Node::getCreated),
-			new MappedFilter<>("price", "Filters by price", NumberFilter.filter(),
+			new MappedFilter<>("NODE", "uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
+			new MappedFilter<>("NODE", "schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema, Pair.pair("NODE", "schema")),
+			new MappedFilter<>("NODE", "language", "Filters by Language", StringFilter.filter(), Node::getLanguage),
+			new MappedFilter<>("NODE", "name", "Filters by name", StringFilter.filter(), Node::getName),
+			new MappedFilter<>("NODE", "published", "Filters by published state", BooleanFilter.filter(), Node::isPublished),
+			new MappedFilter<>("NODE", "created", "Filters by creation date", DateFilter.filter(), Node::getCreated),
+			new MappedFilter<>("NODE", "price", "Filters by price", NumberFilter.filter(),
 				node -> node.getPrice() == null ? null : new BigDecimal(node.getPrice().toString())));
 	}
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import com.gentics.graphqlfilter.filter.sql2.Comparison;
+import com.gentics.graphqlfilter.filter.operation.Comparison;
 
 import graphql.schema.GraphQLList;
 

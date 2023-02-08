@@ -13,9 +13,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.gentics.graphqlfilter.filter.sql2.Combiner;
-import com.gentics.graphqlfilter.filter.sql2.FilterOperation;
-import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.Combiner;
+import com.gentics.graphqlfilter.filter.operation.FilterOperation;
+import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.NoOperationException;
 import com.gentics.graphqlfilter.util.Lazy;
 
 import graphql.schema.GraphQLInputType;
@@ -131,21 +132,27 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	}
 
 	@Override
-	public Optional<FilterOperation<?>> maybeGetFilterOperation(FilterQuery<?, Map<String, ?>> query) {
+	public FilterOperation<?> createFilterOperation(FilterQuery<?, Map<String, ?>> query) throws NoOperationException {
 		try {
 			List<FilterOperation<?>> operations = query.getQuery().entrySet().stream()
 				.map(entry -> findFilter(entry.getKey())
-						.map(f -> f.maybeGetFilterOperation(new FilterQuery<>(f.getOwner().orElse(String.valueOf(query.getOwner())), f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), entry.getValue())))
-						.orElseThrow(() -> new InvalidParameterException(String.format("SQL Filter %s not found", entry.getKey()))))
-				.map(o -> o.orElseThrow(() -> new NoSuchElementException()))
+						.map(f -> {
+							try {
+								return f.createFilterOperation(new FilterQuery<>(f.getOwner().orElse(String.valueOf(query.getOwner())), f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), entry.getValue()));
+							} catch (NoOperationException noop) {
+								throw new NoSuchElementException(noop.getLocalizedMessage());
+							}
+						})
+						.orElseThrow(() -> new InvalidParameterException(String.format("Filter Operation %s not found", entry.getKey()))))
 				.collect(Collectors.toList());
 			if (operations.size() > 0) {
-				return Optional.of(Combiner.and(operations));
+				return Combiner.and(operations);
+			} else {
+				throw new NoOperationException("No operational filters available");
 			}
 		} catch (NoSuchElementException e) {
-			// log
+			throw new NoOperationException(e.getMessage());
 		}
-		return Optional.empty();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -5,10 +5,12 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.gentics.graphqlfilter.filter.sql2.FilterOperation;
-import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.FilterOperation;
+import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.NoOperationException;
 
 import graphql.schema.GraphQLInputType;
+import graphql.util.Pair;
 
 /**
  * A filter that maps the type of the predicate input.
@@ -26,6 +28,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	private final String name;
 	private final String description;
 	private final String owner;
+	private final Optional<Pair<String, String>> maybeJoin;
 
 	/**
 	 * Create a MappedFilter.
@@ -40,6 +43,38 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 *            A function that maps the predicate input type to another type
 	 */
 	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper) {
+		this(owner, name, description, delegate, javaMapper, Optional.empty());
+	}
+
+	/**
+	 * Create a MappedFilter.
+	 *
+	 * @param name
+	 *            name of the filter
+	 * @param description
+	 *            description of the filter
+	 * @param delegate
+	 *            the original filter to be mapped
+	 * @param javaMapper
+	 *            A function that maps the predicate input type to another type
+	 */
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Pair<String, String> join) {
+		this(owner, name, description, delegate, javaMapper, Optional.ofNullable(join));
+	}
+
+	/**
+	 * Create a MappedFilter.
+	 *
+	 * @param name
+	 *            name of the filter
+	 * @param description
+	 *            description of the filter
+	 * @param delegate
+	 *            the original filter to be mapped
+	 * @param javaMapper
+	 *            A function that maps the predicate input type to another type
+	 */
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Optional<Pair<String, String>> maybeJoin) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(description);
 		Objects.requireNonNull(javaMapper);
@@ -48,6 +83,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 		this.name = name;
 		this.description = description;
 		this.owner = owner;
+		this.maybeJoin = maybeJoin;
 	}
 
 	@Override
@@ -71,13 +107,16 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	}
 
 	@Override
-	public Optional<FilterOperation<?>> maybeGetFilterOperation(FilterQuery<?, Q> query) {
-		//return getOwner().flatMap(o -> delegate.maybeGetFilterOperation(new FilterQuery<>(o, getName(), query.getQuery())));
-		return delegate.maybeGetFilterOperation(new FilterQuery<>(getOwner().orElse(String.valueOf(query.getOwner())), query.getField(), query.getQuery()));
+	public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws NoOperationException {
+		return delegate.createFilterOperation(new FilterQuery<>(getOwner().orElse(String.valueOf(query.getOwner())), query.getField(), query.getQuery()));
 	}
 
 	@Override
 	public Optional<String> getOwner() {
 		return Optional.ofNullable(delegate.getOwner().orElse(owner));
+	}
+
+	public Optional<Pair<String, String>> getMaybeJoin() {
+		return maybeJoin;
 	}
 }

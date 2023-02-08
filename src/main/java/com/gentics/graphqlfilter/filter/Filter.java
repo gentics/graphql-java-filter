@@ -3,8 +3,9 @@ package com.gentics.graphqlfilter.filter;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.gentics.graphqlfilter.filter.sql2.FilterOperation;
-import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.FilterOperation;
+import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.NoOperationException;
 
 import graphql.schema.GraphQLInputType;
 
@@ -37,7 +38,7 @@ public interface Filter<T, Q> {
 
 	Optional<String> getOwner();
 
-	default Optional<FilterOperation<?>> maybeGetFilterOperation(FilterQuery<?, Q> query) {
-		return Optional.empty();
+	default FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws NoOperationException {
+		throw new NoOperationException("No operation for this query: " + String.valueOf(query));
 	}
 }

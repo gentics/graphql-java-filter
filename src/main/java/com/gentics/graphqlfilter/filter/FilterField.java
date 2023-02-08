@@ -7,9 +7,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.gentics.graphqlfilter.filter.sql2.Comparison;
-import com.gentics.graphqlfilter.filter.sql2.FilterOperation;
-import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.Comparison;
+import com.gentics.graphqlfilter.filter.operation.FilterOperation;
+import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.NoOperationException;
 
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputType;
@@ -87,8 +88,12 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 			}
 
 			@Override
-			public Optional<FilterOperation<?>> maybeGetFilterOperation(FilterQuery<?, Q> query) {
-				return createFilterDefinition.map(f -> f.apply(query));
+			public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws NoOperationException {
+				if (createFilterDefinition.isPresent()) {
+					return createFilterDefinition.map(f -> f.apply(query)).get();
+				} else {
+					throw new NoOperationException("No operation for this query: " + String.valueOf(query));
+				}
 			}
 
 			@Override
