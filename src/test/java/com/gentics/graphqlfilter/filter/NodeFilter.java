@@ -3,10 +3,10 @@ package com.gentics.graphqlfilter.filter;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import com.gentics.graphqlfilter.model.Node;
 
-import graphql.com.google.common.base.Optional;
 
 public class NodeFilter extends MainFilter<Node> {
 
@@ -20,7 +20,7 @@ public class NodeFilter extends MainFilter<Node> {
 	}
 
 	private NodeFilter() {
-		super("NodeFilter", "Filters Nodes", false, Optional.of(null));
+		super("NodeFilter", "Filters Nodes", false, Optional.empty());
 	}
 
 	@Override

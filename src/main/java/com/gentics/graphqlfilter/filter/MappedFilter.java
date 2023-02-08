@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 
 import com.gentics.graphqlfilter.filter.sql.SqlField;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
+import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
+import com.gentics.graphqlfilter.filter.sql2.FilterOperation;
 
 import graphql.schema.GraphQLInputType;
 
@@ -23,9 +25,10 @@ import graphql.schema.GraphQLInputType;
  */
 public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	private final Filter<T, Q> delegate;
-	private final Function<I, T> mapper;
+	private final Function<I, T> javaMapper;
 	private final String name;
 	private final String description;
+	private final String owner;
 
 	/**
 	 * Create a MappedFilter.
@@ -36,17 +39,18 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 *            description of the filter
 	 * @param delegate
 	 *            the original filter to be mapped
-	 * @param mapper
+	 * @param javaMapper
 	 *            A function that maps the predicate input type to another type
 	 */
-	public MappedFilter(String name, String description, Filter<T, Q> delegate, Function<I, T> mapper) {
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(description);
-		Objects.requireNonNull(mapper);
+		Objects.requireNonNull(javaMapper);
 		this.delegate = delegate;
-		this.mapper = mapper;
+		this.javaMapper = javaMapper;
 		this.name = name;
 		this.description = description;
+		this.owner = owner;
 	}
 
 	@Override
@@ -61,7 +65,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 
 	@Override
 	public Predicate<I> createPredicate(Q query) {
-		return input -> delegate.createPredicate(query).test(mapper.apply(input));
+		return input -> delegate.createPredicate(query).test(javaMapper.apply(input));
 	}
 
 	@Override
@@ -75,7 +79,13 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	}
 
 	@Override
+	public Optional<FilterOperation<?>> maybeGetFilterOperation(FilterQuery<?, Q> query) {
+		//return getOwner().flatMap(o -> delegate.maybeGetFilterOperation(new FilterQuery<>(o, getName(), query.getQuery())));
+		return delegate.maybeGetFilterOperation(new FilterQuery<>(getOwner().orElse(String.valueOf(query.getOwner())), query.getField(), query.getQuery()));
+	}
+
+	@Override
 	public Optional<String> getOwner() {
-		return delegate.getOwner();
+		return Optional.ofNullable(delegate.getOwner().orElse(owner));
 	}
 }

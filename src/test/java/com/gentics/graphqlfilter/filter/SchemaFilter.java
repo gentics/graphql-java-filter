@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
+import com.gentics.graphqlfilter.filter.sql2.Comparison;
 import com.gentics.graphqlfilter.model.Schema;
 import com.gentics.graphqlfilter.util.FilterUtil;
 
@@ -26,7 +27,7 @@ public class SchemaFilter extends MainFilter<Schema> {
 	}
 
 	private SchemaFilter() {
-		super("SchemaFilter", "Filters schemas", false);
+		super("SchemaFilter", "Filters schemas", false, Optional.empty());
 	}
 
 	private static GraphQLInputType getSchemaEnum() {
@@ -44,6 +45,7 @@ public class SchemaFilter extends MainFilter<Schema> {
 			new MappedFilter<>("uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
 			FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(),
 				name -> nullablePredicate(schema -> schema.getName().equals(name)), 
-				Optional.of((query, fields) -> new ComparisonPredicate<>("=", FilterUtil.addFluent(new ArrayList<>(fields), "name"), query, true))));
+				Optional.of((query, fields) -> new ComparisonPredicate<>("=", FilterUtil.addFluent(new ArrayList<>(fields), "name"), query, true)),
+				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))));
 	}
 }

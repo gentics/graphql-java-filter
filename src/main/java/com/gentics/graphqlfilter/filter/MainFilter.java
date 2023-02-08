@@ -18,6 +18,9 @@ import com.gentics.graphqlfilter.filter.sql.AndPredicate;
 import com.gentics.graphqlfilter.filter.sql.CombinerPredicate;
 import com.gentics.graphqlfilter.filter.sql.SqlField;
 import com.gentics.graphqlfilter.filter.sql.SqlPredicate;
+import com.gentics.graphqlfilter.filter.sql2.Combiner;
+import com.gentics.graphqlfilter.filter.sql2.FilterOperation;
+import com.gentics.graphqlfilter.filter.sql2.FilterQuery;
 import com.gentics.graphqlfilter.util.FilterUtil;
 import com.gentics.graphqlfilter.util.Lazy;
 
@@ -131,6 +134,24 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 			.map(entry -> (Predicate<T>) findFilter(entry.getKey()).orElseThrow(() -> new InvalidParameterException(String.format("Filter %s not found", entry.getKey()))).createPredicate(entry.getValue()))
 			.reduce(Predicate::and)
 			.orElse(ignore -> true);
+	}
+
+	@Override
+	public Optional<FilterOperation<?>> maybeGetFilterOperation(FilterQuery<?, Map<String, ?>> query) {
+		try {
+			List<FilterOperation<?>> operations = query.getQuery().entrySet().stream()
+				.map(entry -> findFilter(entry.getKey())
+						.map(f -> f.maybeGetFilterOperation(new FilterQuery<>(f.getOwner().orElse(String.valueOf(query.getOwner())), f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), entry.getValue())))
+						.orElseThrow(() -> new InvalidParameterException(String.format("SQL Filter %s not found", entry.getKey()))))
+				.map(o -> o.orElseThrow(() -> new NoSuchElementException()))
+				.collect(Collectors.toList());
+			if (operations.size() > 0) {
+				return Optional.of(Combiner.and(operations));
+			}
+		} catch (NoSuchElementException e) {
+			// log
+		}
+		return Optional.empty();
 	}
 
 	@Override

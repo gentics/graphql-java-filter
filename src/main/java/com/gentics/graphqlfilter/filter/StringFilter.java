@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import com.gentics.graphqlfilter.filter.sql.ComparisonPredicate;
 import com.gentics.graphqlfilter.filter.sql.InPredicate;
+import com.gentics.graphqlfilter.filter.sql2.Comparison;
 
 import graphql.schema.GraphQLList;
 
@@ -40,15 +41,17 @@ public class StringFilter extends MainFilter<String> {
 			FilterField.isNull(),
 			FilterField.create("equals", "Compares two strings for equality", GraphQLString, 
 					query -> query::equals, 
-					Optional.of((query, fields) -> new ComparisonPredicate<>("=", fields, query, true))),
+					Optional.of((query, fields) -> new ComparisonPredicate<>("=", fields, query, true)),
+					Optional.of((query) -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
 			FilterField.<String, String>create("contains", "Checks if the string contains the given substring.", GraphQLString, 
 					query -> nullablePredicate(input -> input.contains(query)),
-					Optional.empty()),
+					Optional.empty(), Optional.empty()),
 			FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings", GraphQLList.list(GraphQLString), 
 					query -> query::contains,
-					Optional.of((query, fields) -> new InPredicate(fields, query, true))),
+					Optional.of((query, fields) -> new InPredicate(fields, query, true)),
+					Optional.of((query) -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
 			FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, 
 					query -> nullablePredicate(Pattern.compile(query).asPredicate()),
-					Optional.empty()));
+					Optional.empty(), Optional.empty()));
 	}
 }
