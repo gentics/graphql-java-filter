@@ -3,11 +3,24 @@ package com.gentics.graphqlfilter.filter.operation;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * A literal filter operand.
+ * 
+ * @author plyhun
+ *
+ * @param <T>
+ */
 public class LiteralOperand<T> implements FilterOperand<T> {
 
 	private final boolean escape;
 	private final T value;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param value the literal value
+	 * @param escape should the value be escaped (with the single quotes by default).
+	 */
 	public LiteralOperand(T value, boolean escape) {
 		this.escape = escape;
 		this.value = value;

@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
-import com.gentics.graphqlfilter.filter.operation.NoOperationException;
+import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 
 import graphql.schema.GraphQLInputType;
 
@@ -36,9 +36,26 @@ public interface Filter<T, Q> {
 	 */
 	Predicate<T> createPredicate(Q query);
 
-	Optional<String> getOwner();
+	/**
+	 * Get the name of an entity owning this filter, if available. If not, a filter owner is considered the one level above. 
+	 * The owner data is required to build a formalized filter representation. For instance, the entity name or field name has a strict owner, either a entity type or an entity,
+	 * but the distinct operations like `equals` or `greater-than` have no owner, because may be called from anywhere.
+	 * 
+	 * @return
+	 */
+	default Optional<String> getOwner() {
+		return Optional.empty();
+	}
 
-	default FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws NoOperationException {
-		throw new NoOperationException("No operation for this query: " + String.valueOf(query));
+	/**
+	 * Create the formal representation of a filter. Not every filter is possible to formalize into the supported operation, 
+	 * so by default this method throws an error.
+	 * 
+	 * @param query
+	 * @return
+	 * @throws UnformalizableQuery
+	 */
+	default FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
+		throw new UnformalizableQuery("No operation for this query: " + String.valueOf(query));
 	}
 }

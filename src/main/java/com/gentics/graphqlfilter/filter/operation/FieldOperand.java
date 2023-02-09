@@ -4,16 +4,36 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * A table field operand.
+ * 
+ * @author plyhun
+ *
+ * @param <T> table type
+ */
 public class FieldOperand<T> implements FilterOperand<String> {
 
 	private final T owner;
 	private final String field;
 	private final Optional<String> alias;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param etype
+	 * @param field
+	 */
 	public FieldOperand(T etype, String field) {
 		this(etype, field, Optional.empty());
 	}
 
+	/**
+	 * Use this constructor to override a default generated `_{owner_name}` field owner alies.
+	 * 
+	 * @param owner
+	 * @param field
+	 * @param alias
+	 */
 	public FieldOperand(T owner, String field, Optional<String> alias) {
 		this.owner = owner;
 		this.field = field;
@@ -35,6 +55,11 @@ public class FieldOperand<T> implements FilterOperand<String> {
 		return "FieldOperand [owner=" + owner + ", field=" + field + ", alias=" + alias + "]";
 	}
 
+	/**
+	 * Get an owner type.
+	 * 
+	 * @return
+	 */
 	public T getOwner() {
 		return owner;
 	}

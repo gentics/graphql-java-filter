@@ -1,6 +1,5 @@
 package com.gentics.graphqlfilter.filter;
 
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import graphql.Scalars;
@@ -28,10 +27,5 @@ public class BooleanFilter implements Filter<Boolean, Boolean> {
 	@Override
 	public Predicate<Boolean> createPredicate(Boolean query) {
 		return query::equals;
-	}
-
-	@Override
-	public Optional<String> getOwner() {
-		return Optional.empty();
 	}
 }

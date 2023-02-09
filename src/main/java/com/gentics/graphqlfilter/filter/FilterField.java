@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 import com.gentics.graphqlfilter.filter.operation.Comparison;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
-import com.gentics.graphqlfilter.filter.operation.NoOperationException;
+import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputType;
@@ -28,7 +28,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	 * The description of the field in the GraphQLInputObject
 	 */
 	String getDescription();
-	
+
 	/**
 	 * Creates the field which is used to construct the GraphQL input type.
 	 */
@@ -88,17 +88,12 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 			}
 
 			@Override
-			public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws NoOperationException {
+			public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
 				if (createFilterDefinition.isPresent()) {
 					return createFilterDefinition.map(f -> f.apply(query)).get();
 				} else {
-					throw new NoOperationException("No operation for this query: " + String.valueOf(query));
+					throw new UnformalizableQuery("No operation for this query: " + String.valueOf(query));
 				}
-			}
-
-			@Override
-			public Optional<String> getOwner() {
-				return Optional.empty();
 			}
 		};
 	}

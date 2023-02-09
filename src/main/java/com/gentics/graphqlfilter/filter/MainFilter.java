@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import com.gentics.graphqlfilter.filter.operation.Combiner;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
-import com.gentics.graphqlfilter.filter.operation.NoOperationException;
+import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 import com.gentics.graphqlfilter.util.Lazy;
 
 import graphql.schema.GraphQLInputType;
@@ -47,6 +47,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	 *            the description of the filter
 	 * @param filters
 	 *            a list of filters to be used that are available in this filter
+	 * @param ownerType
+	 *            an owner name required for the filter formalizing
 	 */
 	public static <T> MainFilter<T> mainFilter(String name, String description, List<FilterField<T, ?>> filters, Optional<String> ownerType) {
 		return mainFilter(name, description, filters, true, ownerType);
@@ -63,6 +65,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	 *            a list of filters to be used that are available in this filter
 	 * @param addCommonFilters
 	 *            set to false to prevent adding of common composition types
+	 * @param ownerType
+	 *            an owner name required for the filter formalizing
 	 */
 	public static <T> MainFilter<T> mainFilter(String name, String description, List<FilterField<T, ?>> filters, boolean addCommonFilters, Optional<String> ownerType) {
 		return new MainFilter<T>(name, description, addCommonFilters, ownerType) {
@@ -82,6 +86,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	 *            the description of the filter
 	 * @param addCommonFilters
 	 *            set to false to prevent adding of common composition types
+	 * @param ownerType
+	 *            an owner name required for the filter formalizing
 	 */
 	public MainFilter(String name, String description, boolean addCommonFilters, Optional<String> ownerType) {
 		this.ownerType = ownerType;
@@ -108,6 +114,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	 *            the name of the filter (must be unique across all filters used)
 	 * @param description
 	 *            the description of the filter
+	 * @param ownerType
+	 *            an owner name required for the filter formalizing
 	 */
 	public MainFilter(String name, String description, Optional<String> ownerType) {
 		this(name, description, true, ownerType);
@@ -132,26 +140,27 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	}
 
 	@Override
-	public FilterOperation<?> createFilterOperation(FilterQuery<?, Map<String, ?>> query) throws NoOperationException {
+	public FilterOperation<?> createFilterOperation(FilterQuery<?, Map<String, ?>> query) throws UnformalizableQuery {
 		try {
 			List<FilterOperation<?>> operations = query.getQuery().entrySet().stream()
 				.map(entry -> findFilter(entry.getKey())
 						.map(f -> {
 							try {
 								return f.createFilterOperation(new FilterQuery<>(f.getOwner().orElse(String.valueOf(query.getOwner())), f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), entry.getValue()));
-							} catch (NoOperationException noop) {
+							} catch (UnformalizableQuery noop) {
+								// Stream API and checked exceptions are not befriended, so we wrap the origin here...
 								throw new NoSuchElementException(noop.getLocalizedMessage());
 							}
-						})
-						.orElseThrow(() -> new InvalidParameterException(String.format("Filter Operation %s not found", entry.getKey()))))
+						}).orElseThrow(() -> new InvalidParameterException(String.format("Filter Operation %s not found", entry.getKey()))))
 				.collect(Collectors.toList());
 			if (operations.size() > 0) {
 				return Combiner.and(operations);
 			} else {
-				throw new NoOperationException("No operational filters available");
+				throw new UnformalizableQuery("No operational filters available");
 			}
 		} catch (NoSuchElementException e) {
-			throw new NoOperationException(e.getMessage());
+			// ... and unwrap here
+			throw new UnformalizableQuery(e.getMessage());
 		}
 	}
 

@@ -60,11 +60,6 @@ public class CommonFilters {
 			public GraphQLInputType getType() {
 				return GraphQLList.list(type);
 			}
-
-			@Override
-			public Optional<String> getOwner() {
-				return Optional.empty();
-			}
 		};
 	}
 
@@ -92,11 +87,6 @@ public class CommonFilters {
 			public GraphQLInputType getType() {
 				return GraphQLList.list(type);
 			}
-
-			@Override
-			public Optional<String> getOwner() {
-				return Optional.empty();
-			}
 		};
 	}
 
@@ -120,11 +110,6 @@ public class CommonFilters {
 			@Override
 			public GraphQLInputType getType() {
 				return type;
-			}
-
-			@Override
-			public Optional<String> getOwner() {
-				return Optional.empty();
 			}
 		};
 	}
