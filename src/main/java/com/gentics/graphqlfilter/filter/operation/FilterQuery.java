@@ -1,5 +1,6 @@
 package com.gentics.graphqlfilter.filter.operation;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -15,11 +16,17 @@ public class FilterQuery<O, Q> {
 	private final O owner;
 	private final Q query;
 	private final String field;
+	private final Optional<Map<String, String>> maybeJoins;
 
-	public FilterQuery(O owner, String field, Q query) {
+	public FilterQuery(O owner, String field, Q query, Optional<Map<String, String>> maybeJoins) {
 		this.owner = owner;
 		this.field = field;
 		this.query = query;
+		this.maybeJoins = maybeJoins;
+	}
+
+	public FilterQuery(O owner, String field, Q query) {
+		this(owner, field, query, Optional.empty());
 	}
 
 	/**
@@ -56,7 +63,7 @@ public class FilterQuery<O, Q> {
 	 * @return
 	 */
 	public FieldOperand<O> makeFieldOperand(Optional<String> alias) {
-		return new FieldOperand<>(owner, field, alias);
+		return new FieldOperand<>(owner, field, maybeJoins, alias);
 	}
 
 	/**
@@ -69,8 +76,17 @@ public class FilterQuery<O, Q> {
 		return new LiteralOperand<>(query, escape);
 	}
 
+	/**
+	 * Get the joins between owner, if available.
+	 * 
+	 * @return
+	 */
+	public Optional<Map<String, String>> getMaybeJoins() {
+		return maybeJoins;
+	}
+
 	@Override
 	public String toString() {
-		return "FilterQuery [owner=" + owner + ", query=" + query + ", field=" + field + "]";
+		return "FilterQuery [owner=" + owner + ", query=" + query + ", field=" + field + ", maybeJoins=" + maybeJoins + "]";
 	}
 }

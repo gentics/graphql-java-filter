@@ -1,5 +1,8 @@
 package com.gentics.graphqlfilter.filter;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -114,7 +117,14 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
-		return delegate.createFilterOperation(new FilterQuery<>(getOwner().orElse(String.valueOf(query.getOwner())), query.getField(), query.getQuery()));
+		Map<String, String> joins = new HashMap<>(getJoins());
+		query.getMaybeJoins().ifPresent(join -> joins.putAll(join));
+		return delegate.createFilterOperation(
+				new FilterQuery<>(
+						getOwner().orElse(String.valueOf(query.getOwner())), 
+						query.getField(), 
+						query.getQuery(), 
+						Optional.of(joins)));
 	}
 
 	@Override
@@ -127,7 +137,10 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 * 
 	 * @return
 	 */
-	public Optional<Pair<String, String>> getMaybeJoin() {
-		return maybeJoin;
+	public Map<String, String> getJoins() {
+		return maybeJoin
+				.flatMap(join -> delegate.getOwner().map(downer -> Pair.pair(owner + "." + join.first, downer + "." + join.second)))
+				.map(join -> Collections.singletonMap(join.first, join.second))
+				.orElse(new HashMap<>());
 	}
 }

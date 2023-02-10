@@ -95,6 +95,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 					throw new UnformalizableQuery("No operation for this query: " + String.valueOf(query));
 				}
 			}
+
 		};
 	}
 }

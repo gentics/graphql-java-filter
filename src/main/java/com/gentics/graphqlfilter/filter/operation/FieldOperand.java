@@ -16,6 +16,7 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	private final T owner;
 	private final String field;
 	private final Optional<String> alias;
+	private final Optional<Map<String, String>> joins;
 
 	/**
 	 * Constructor.
@@ -24,7 +25,7 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	 * @param field
 	 */
 	public FieldOperand(T etype, String field) {
-		this(etype, field, Optional.empty());
+		this(etype, field, Optional.empty(), Optional.empty());
 	}
 
 	/**
@@ -34,10 +35,11 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	 * @param field
 	 * @param alias
 	 */
-	public FieldOperand(T owner, String field, Optional<String> alias) {
+	public FieldOperand(T owner, String field, Optional<Map<String, String>> joins, Optional<String> alias) {
 		this.owner = owner;
 		this.field = field;
 		this.alias = alias;
+		this.joins = joins;
 	}
 
 	@Override
@@ -48,11 +50,6 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	@Override
 	public String toSql() {
 		return alias.orElse("_" + String.valueOf(owner).toLowerCase()) + "." + field;
-	}
-
-	@Override
-	public String toString() {
-		return "FieldOperand [owner=" + owner + ", field=" + field + ", alias=" + alias + "]";
 	}
 
 	/**
@@ -66,6 +63,11 @@ public class FieldOperand<T> implements FilterOperand<String> {
 
 	@Override
 	public Map<String, String> getJoins(Map<String, String> parent) {
-		return Collections.singletonMap(String.valueOf(owner), field);
+		return joins.orElse(Collections.emptyMap());
+	}
+
+	@Override
+	public String toString() {
+		return "FieldOperand [owner=" + owner + ", field=" + field + ", alias=" + alias + ", joins=" + joins + "]";
 	}
 }

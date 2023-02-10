@@ -4,6 +4,7 @@ import static graphql.schema.GraphQLInputObjectType.newInputObject;
 
 import java.security.InvalidParameterException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -142,11 +143,18 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Map<String, ?>> query) throws UnformalizableQuery {
 		try {
+			Map<String, String> joins = new HashMap<>();
+			query.getMaybeJoins().ifPresent(joins::putAll);
 			List<FilterOperation<?>> operations = query.getQuery().entrySet().stream()
 				.map(entry -> findFilter(entry.getKey())
 						.map(f -> {
 							try {
-								return f.createFilterOperation(new FilterQuery<>(f.getOwner().orElse(String.valueOf(query.getOwner())), f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), entry.getValue()));
+								return f.createFilterOperation(
+										new FilterQuery<>(
+												f.getOwner().orElse(String.valueOf(query.getOwner())), 
+												f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), 
+												entry.getValue(), 
+												Optional.ofNullable(joins)));
 							} catch (UnformalizableQuery noop) {
 								// Stream API and checked exceptions are not befriended, so we wrap the origin here...
 								throw new NoSuchElementException(noop.getLocalizedMessage());
