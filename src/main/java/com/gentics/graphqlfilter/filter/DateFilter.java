@@ -11,6 +11,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,13 +39,13 @@ public class DateFilter extends MainFilter<Long> {
 	 */
 	public static synchronized DateFilter filter() {
 		if (instance == null) {
-			instance = new DateFilter();
+			instance = new DateFilter(null);
 		}
 		return instance;
 	}
 
-	private DateFilter() {
-		super("DateFilter", "Filters Dates", false, Optional.empty());
+	public DateFilter(String owner) {
+		super("DateFilter", "Filters Dates", false, Optional.ofNullable(owner));
 	}
 
 	@Override
@@ -53,14 +54,14 @@ public class DateFilter extends MainFilter<Long> {
 			FilterField.isNull(),
 			FilterField.create("equals", "Compares the date to the given ISO-8601 date for equality.", GraphQLString,
 				dateTimePredicate(Instant::equals),
-				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
+				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
 			FilterField.create("oneOf", "Tests if the date is equal to one of the given ISO-8601 dates.", GraphQLList.list(GraphQLString),
 				this::oneOf, 
-				Optional.of(query -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
+				Optional.of(query -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDates)))),
 			FilterField.create("after", "Tests if the date is after the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isAfter),
-				Optional.of(query -> Comparison.gt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
+				Optional.of(query -> Comparison.gt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
 			FilterField.create("before", "Tests if the date is before the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isBefore),
-				Optional.of(query -> Comparison.lt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
+				Optional.of(query -> Comparison.lt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
 			FilterField.<Long, Boolean>create("isFuture", "Tests if the date is in the future.", GraphQLBoolean,
 				query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isAfter(Instant.now()) == query),
 				Optional.of(query -> Comparison.gt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)))),
@@ -86,6 +87,10 @@ public class DateFilter extends MainFilter<Long> {
 
 	private Instant parseLong(Long date) {
 		return Instant.ofEpochMilli(date);
+	}
+
+	public static Collection<Instant> parseDates(Collection<String> dates) {
+		return dates.stream().map(DateFilter::parseDate).collect(Collectors.toList());
 	}
 
 	public static Instant parseDate(String date) {

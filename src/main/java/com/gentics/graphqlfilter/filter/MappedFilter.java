@@ -139,7 +139,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 */
 	public Map<String, String> getJoins() {
 		return maybeJoin
-				.flatMap(join -> delegate.getOwner().map(downer -> Pair.pair(owner + "." + join.first, downer + "." + join.second)))
+				.map(join -> Pair.pair(owner + "." + join.first, delegate.getOwner().map(o -> o + ".").orElse("") + join.second))
 				.map(join -> Collections.singletonMap(join.first, join.second))
 				.orElse(new HashMap<>());
 	}

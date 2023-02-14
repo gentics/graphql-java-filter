@@ -1,5 +1,9 @@
 package com.gentics.graphqlfilter.filter.operation;
 
+import java.util.Optional;
+
+import graphql.util.Pair;
+
 /**
  * A comparison operation over a pair of operands of an arbitrary type.
  * 
@@ -22,6 +26,11 @@ public interface ComparisonOperation extends FilterOperation<FilterOperand<?>> {
 	 * @return
 	 */
 	FilterOperand<?> getRight();
+
+	@Override
+	default Optional<Pair<FilterOperand<?>, FilterOperand<?>>> maybeComparison() {
+		return Optional.of(Pair.pair(getLeft(), getRight()));
+	}
 
 	@Override
 	default String toSql() {

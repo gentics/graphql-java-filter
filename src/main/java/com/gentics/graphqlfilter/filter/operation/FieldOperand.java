@@ -70,4 +70,9 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	public String toString() {
 		return "FieldOperand [owner=" + owner + ", field=" + field + ", alias=" + alias + ", joins=" + joins + "]";
 	}
+
+	@Override
+	public boolean isFieldName() {
+		return true;
+	}
 }

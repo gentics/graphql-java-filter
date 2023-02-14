@@ -45,4 +45,9 @@ public class LiteralOperand<T> implements FilterOperand<T> {
 	public Map<String, String> getJoins(Map<String, String> parent) {
 		return Collections.emptyMap();
 	}
+
+	@Override
+	public boolean isFieldName() {
+		return false;
+	}
 }

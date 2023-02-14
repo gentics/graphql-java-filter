@@ -3,8 +3,11 @@ package com.gentics.graphqlfilter.filter.operation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.gentics.graphqlfilter.util.FilterUtil;
+
+import graphql.util.Pair;
 
 /**
  * A formalized representation of a filtering operation.
@@ -28,6 +31,14 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 	 * @return
 	 */
 	List<T> getOperands();
+
+	default Optional<List<FilterOperation<?>>> maybeCombination() {
+		return Optional.empty();
+	}
+
+	default Optional<Pair<FilterOperand<?>, FilterOperand<?>>> maybeComparison() {
+		return Optional.empty();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

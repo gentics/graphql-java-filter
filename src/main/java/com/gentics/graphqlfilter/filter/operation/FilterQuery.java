@@ -2,6 +2,7 @@ package com.gentics.graphqlfilter.filter.operation;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * A representation of not yet parsed GraphQL query, to use in the formalization mechanism.
@@ -74,6 +75,16 @@ public class FilterQuery<O, Q> {
 	 */
 	public LiteralOperand<Q> makeValueOperand(boolean escape) {
 		return new LiteralOperand<>(query, escape);
+	}
+
+	/**
+	 * Make a literal operand out of this query.
+	 * 
+	 * @param escape
+	 * @return
+	 */
+	public <T> LiteralOperand<T> makeValueOperand(boolean escape, Function<Q, T> adapter) {
+		return new LiteralOperand<>(adapter.apply(query), escape);
 	}
 
 	/**
