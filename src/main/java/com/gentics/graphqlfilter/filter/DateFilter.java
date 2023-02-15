@@ -64,10 +64,14 @@ public class DateFilter extends MainFilter<Long> {
 				Optional.of(query -> Comparison.lt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
 			FilterField.<Long, Boolean>create("isFuture", "Tests if the date is in the future.", GraphQLBoolean,
 				query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isAfter(Instant.now()) == query),
-				Optional.of(query -> Comparison.gt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)))),
+				Optional.of(query -> query.getQuery() 
+						? Comparison.gt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)) 
+						: Comparison.lte(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)))),
 			FilterField.<Long, Boolean>create("isPast", "Tests if the date is in the past.", GraphQLBoolean,
 				query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isBefore(Instant.now()) == query),
-				Optional.of(query -> Comparison.lt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)))));
+				Optional.of(query -> query.getQuery() 
+						? Comparison.lt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true))
+						: Comparison.gte(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)))));
 	}
 
 	private Function<String, Predicate<Long>> dateTimePredicate(BiPredicate<Instant, Instant> predicate) {
