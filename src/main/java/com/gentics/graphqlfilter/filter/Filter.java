@@ -3,6 +3,7 @@ package com.gentics.graphqlfilter.filter;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import com.gentics.graphqlfilter.Sorting;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
 import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
@@ -28,6 +29,15 @@ public interface Filter<T, Q> {
 	GraphQLInputType getType();
 
 	/**
+	 * The sorting type of this filter. If this filter contains fields, the original type is returned. Otherwise the terminating {@link Sorting} enumeration is considered.
+	 * 
+	 * @return
+	 */
+	default GraphQLInputType getSortingType() {
+		return isSortable() ? Sorting.getSortingEnumType() : getType();
+	}
+
+	/**
 	 * Creates a predicate based on the filter the user provided
 	 * 
 	 * @param query
@@ -35,6 +45,15 @@ public interface Filter<T, Q> {
 	 * @return a predicate to filter elements
 	 */
 	Predicate<T> createPredicate(Q query);
+
+	/**
+	 * Is this filter supports sorting over input values?
+	 * 
+	 * @return
+	 */
+	default boolean isSortable() {
+		return true;
+	}
 
 	/**
 	 * Get the name of an entity owning this filter, if available. If not, a filter owner is considered the one level above. 

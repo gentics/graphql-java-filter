@@ -18,4 +18,12 @@ public interface StartFilter<T, Q> extends Filter<T, Q> {
 			.type(getType())
 			.build();
 	}
+
+	default GraphQLArgument createSortArgument() {
+		return GraphQLArgument.newArgument()
+				.name("sort")
+				.description("Sorts the list of elements")
+				.type(getSortingType())
+				.build();
+	}
 }

@@ -2,7 +2,6 @@ package com.gentics.graphqlfilter.filter;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import graphql.schema.GraphQLInputType;
@@ -60,6 +59,11 @@ public class CommonFilters {
 			public GraphQLInputType getType() {
 				return GraphQLList.list(type);
 			}
+
+			@Override
+			public boolean isSortable() {
+				return false;
+			}
 		};
 	}
 
@@ -87,6 +91,11 @@ public class CommonFilters {
 			public GraphQLInputType getType() {
 				return GraphQLList.list(type);
 			}
+
+			@Override
+			public boolean isSortable() {
+				return false;
+			}
 		};
 	}
 
@@ -110,6 +119,11 @@ public class CommonFilters {
 			@Override
 			public GraphQLInputType getType() {
 				return type;
+			}
+
+			@Override
+			public boolean isSortable() {
+				return false;
 			}
 		};
 	}

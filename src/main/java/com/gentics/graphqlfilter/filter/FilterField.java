@@ -41,6 +41,17 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	}
 
 	/**
+	 * Creates the field which is used to construct the sorting argument for an GraphQL input type.
+	 */
+	default GraphQLInputObjectField toSortableObjectField() {
+		return newInputObjectField()
+			.name(getName())
+			.description(getDescription())
+			.type(getSortingType())
+			.build();
+	}
+
+	/**
 	 * A filter that tests if a value is null.
 	 */
 	static <T> FilterField<T, Boolean> isNull() {
@@ -96,6 +107,10 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 				}
 			}
 
+			@Override
+			public boolean isSortable() {
+				return false;
+			}
 		};
 	}
 }

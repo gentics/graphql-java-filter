@@ -143,4 +143,14 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 				.map(join -> Collections.singletonMap(join.first, join.second))
 				.orElse(new HashMap<>());
 	}
+
+	@Override
+	public boolean isSortable() {
+		return delegate.isSortable();
+	}
+
+	@Override
+	public GraphQLInputType getSortingType() {
+		return delegate.getSortingType();
+	}
 }

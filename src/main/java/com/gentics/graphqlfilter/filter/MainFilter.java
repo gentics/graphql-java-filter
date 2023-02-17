@@ -14,12 +14,14 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.gentics.graphqlfilter.Sorting;
 import com.gentics.graphqlfilter.filter.operation.Combiner;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
 import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 import com.gentics.graphqlfilter.util.Lazy;
 
+import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLTypeReference;
 
@@ -37,6 +39,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	// without having to fear infinite recursion when reusing a filter in itself.
 	private final Lazy<Map<String, FilterField<T, ?>>> filters;
 	private final Lazy<GraphQLInputType> type;
+	private final Lazy<GraphQLInputType> sortingType;
 	private final Optional<String> ownerType;
 
 	/**
@@ -106,6 +109,21 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 			.description(description)
 			.fields(this.filters.get().values().stream().map(FilterField::toObjectField).collect(Collectors.toList()))
 			.build());
+		sortingType = new Lazy<>(() -> {
+			List<GraphQLInputObjectField> fields = this.filters.get().values().stream()
+					.filter(Filter::isSortable)
+					.map(FilterField::toSortableObjectField)
+					.collect(Collectors.toList());
+			if (fields.size() > 0) {
+				return newInputObject()
+						.name(name + "Sort")
+						.description(description)
+						.fields(fields)
+						.build();
+			} else {
+				return Sorting.getSortingEnumType();
+			}
+		});
 	}
 
 	/**
@@ -130,6 +148,11 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	@Override
 	public GraphQLInputType getType() {
 		return type.get();
+	}
+
+	@Override
+	public GraphQLInputType getSortingType() {
+		return sortingType.get();
 	}
 
 	@Override
