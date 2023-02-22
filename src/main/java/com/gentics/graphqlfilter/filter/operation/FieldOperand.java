@@ -1,8 +1,9 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+
+import com.gentics.graphqlfilter.util.FilterUtil;
 
 /**
  * A table field operand.
@@ -16,7 +17,7 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	private final T owner;
 	private final String field;
 	private final Optional<String> alias;
-	private final Optional<Map<String, String>> joins;
+	private final Optional<Map<JoinPart, JoinPart>> joins;
 
 	/**
 	 * Constructor.
@@ -35,7 +36,7 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	 * @param field
 	 * @param alias
 	 */
-	public FieldOperand(T owner, String field, Optional<Map<String, String>> joins, Optional<String> alias) {
+	public FieldOperand(T owner, String field, Optional<Map<JoinPart, JoinPart>> joins, Optional<String> alias) {
 		this.owner = owner;
 		this.field = field;
 		this.alias = alias;
@@ -62,8 +63,8 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	}
 
 	@Override
-	public Map<String, String> getJoins(Map<String, String> parent) {
-		return joins.orElse(Collections.emptyMap());
+	public Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent) {
+		return joins.map(j -> FilterUtil.addFluent(j, parent)).orElse(parent);
 	}
 
 	@Override
@@ -74,5 +75,10 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	@Override
 	public boolean isFieldName() {
 		return true;
+	}
+
+	@Override
+	public Optional<String> maybeGetOwner() {
+		return Optional.ofNullable(getOwner()).map(String::valueOf);
 	}
 }

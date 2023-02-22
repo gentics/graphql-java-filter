@@ -17,9 +17,9 @@ public class FilterQuery<O, Q> {
 	private final O owner;
 	private final Q query;
 	private final String field;
-	private final Optional<Map<String, String>> maybeJoins;
+	private final Optional<Map<JoinPart, JoinPart>> maybeJoins;
 
-	public FilterQuery(O owner, String field, Q query, Optional<Map<String, String>> maybeJoins) {
+	public FilterQuery(O owner, String field, Q query, Optional<Map<JoinPart, JoinPart>> maybeJoins) {
 		this.owner = owner;
 		this.field = field;
 		this.query = query;
@@ -92,7 +92,7 @@ public class FilterQuery<O, Q> {
 	 * 
 	 * @return
 	 */
-	public Optional<Map<String, String>> getMaybeJoins() {
+	public Optional<Map<JoinPart, JoinPart>> getMaybeJoins() {
 		return maybeJoins;
 	}
 

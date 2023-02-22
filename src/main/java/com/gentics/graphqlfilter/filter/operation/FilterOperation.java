@@ -42,7 +42,7 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	default Map<String, String> getJoins(Map<String, String> parent) {
+	default Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent) {
 		return getOperands().stream().map(o -> o.getJoins(parent)).reduce(Map.class.cast(new HashMap<>()), (map, o) -> FilterUtil.addFluent(map, o), (a, b) -> a);
 	}
 }

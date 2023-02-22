@@ -18,6 +18,7 @@ import com.gentics.graphqlfilter.Sorting;
 import com.gentics.graphqlfilter.filter.operation.Combiner;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.JoinPart;
 import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 import com.gentics.graphqlfilter.util.Lazy;
 
@@ -166,7 +167,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Map<String, ?>> query) throws UnformalizableQuery {
 		try {
-			Map<String, String> joins = new HashMap<>();
+			Map<JoinPart, JoinPart> joins = new HashMap<>();
 			query.getMaybeJoins().ifPresent(joins::putAll);
 			List<FilterOperation<?>> operations = query.getQuery().entrySet().stream()
 				.map(entry -> findFilter(entry.getKey())

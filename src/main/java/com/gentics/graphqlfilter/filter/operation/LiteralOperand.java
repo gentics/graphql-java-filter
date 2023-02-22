@@ -1,7 +1,7 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * A literal filter operand.
@@ -42,12 +42,17 @@ public class LiteralOperand<T> implements FilterOperand<T> {
 	}
 
 	@Override
-	public Map<String, String> getJoins(Map<String, String> parent) {
-		return Collections.emptyMap();
+	public Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent) {
+		return parent;
 	}
 
 	@Override
 	public boolean isFieldName() {
 		return false;
+	}
+
+	@Override
+	public Optional<String> maybeGetOwner() {
+		return Optional.empty();
 	}
 }

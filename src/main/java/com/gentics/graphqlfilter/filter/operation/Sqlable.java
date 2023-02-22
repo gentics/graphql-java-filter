@@ -23,5 +23,5 @@ public interface Sqlable {
 	 * @param parent
 	 * @return
 	 */
-	Map<String, String> getJoins(Map<String, String> parent);
+	Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent);
 }

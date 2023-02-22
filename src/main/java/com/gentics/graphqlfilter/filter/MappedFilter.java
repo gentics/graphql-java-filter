@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.JoinPart;
 import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 
 import graphql.schema.GraphQLInputType;
@@ -31,7 +32,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	private final String name;
 	private final String description;
 	private final String owner;
-	private final Optional<Pair<String, String>> maybeJoin;
+	private final Optional<Pair<String, JoinPart>> maybeJoin;
 
 	/**
 	 * Create a MappedFilter.
@@ -63,7 +64,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 * @param join
 	 *            A pair of owner field / delegate field, formalizing the join relation between an owner and a delegate.
 	 */
-	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Pair<String, String> join) {
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Pair<String, JoinPart> join) {
 		this(owner, name, description, delegate, javaMapper, Optional.ofNullable(join));
 	}
 
@@ -83,7 +84,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 * @param join
 	 *            A possible pair of owner field / delegate field, formalizing the join relation between an owner and a delegate.
 	 */
-	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Optional<Pair<String, String>> maybeJoin) {
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Optional<Pair<String, JoinPart>> maybeJoin) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(description);
 		Objects.requireNonNull(javaMapper);
@@ -117,7 +118,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
-		Map<String, String> joins = new HashMap<>(getJoins());
+		Map<JoinPart, JoinPart> joins = new HashMap<>(getJoins());
 		query.getMaybeJoins().ifPresent(join -> joins.putAll(join));
 		return delegate.createFilterOperation(
 				new FilterQuery<>(
@@ -137,9 +138,9 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 * 
 	 * @return
 	 */
-	public Map<String, String> getJoins() {
+	public Map<JoinPart, JoinPart> getJoins() {
 		return maybeJoin
-				.map(join -> Pair.pair(owner + "." + join.first, delegate.getOwner().map(o -> o + ".").orElse("") + join.second))
+				.map(join -> Pair.pair(new JoinPart(owner, join.first), new JoinPart(delegate.getOwner().orElse(join.second.getTable()), join.second.getField())))
 				.map(join -> Collections.singletonMap(join.first, join.second))
 				.orElse(new HashMap<>());
 	}
