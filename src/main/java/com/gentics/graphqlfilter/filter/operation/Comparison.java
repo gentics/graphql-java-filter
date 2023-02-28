@@ -141,6 +141,16 @@ public class Comparison implements ComparisonOperation {
 		return new Comparison("IS", left, new LiteralOperand<>("NULL", false));
 	}
 
+	/**
+	 * Non-Null check operation.
+	 * 
+	 * @param left
+	 * @return
+	 */
+	public static final Comparison isNotNull(FilterOperand<?> left) {
+		return new Comparison("IS NOT", left, new LiteralOperand<>("NULL", false));
+	}
+
 	@Override
 	public String toString() {
 		return "Comparison [operator=" + operator + ", left=" + left + ", right=" + right + "]";

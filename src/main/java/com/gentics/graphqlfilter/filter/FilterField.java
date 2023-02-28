@@ -57,7 +57,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	static <T> FilterField<T, Boolean> isNull() {
 		return create("isNull", "Tests if the value is null", GraphQLBoolean, 
 				query -> value -> query == (value == null), 
-				Optional.of((query) -> Comparison.isNull(query.makeFieldOperand(Optional.empty()))));
+				Optional.of((query) -> query.getQuery() ? Comparison.isNull(query.makeFieldOperand(Optional.empty())) : Comparison.isNotNull(query.makeFieldOperand(Optional.empty())) ));
 	}
 
 	/**
