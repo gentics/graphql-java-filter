@@ -183,7 +183,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 								// Stream API and checked exceptions are not befriended, so we wrap the origin here...
 								throw new NoSuchElementException(noop.getLocalizedMessage());
 							}
-						}).orElseThrow(() -> new InvalidParameterException(String.format("Filter Operation %s not found", entry.getKey()))))
+						}).orElseThrow(() -> new InvalidParameterException(String.format("Filter Operation '%s' not found", entry.getKey()))))
 				.collect(Collectors.toList());
 			if (operations.size() > 0) {
 				return Combiner.and(operations);
