@@ -7,8 +7,6 @@ import java.util.Optional;
 
 import com.gentics.graphqlfilter.model.Node;
 
-import graphql.util.Pair;
-
 public class NodeFilter extends MainFilter<Node> {
 
 	private static NodeFilter instance;
@@ -28,7 +26,7 @@ public class NodeFilter extends MainFilter<Node> {
 	protected List<FilterField<Node, ?>> getFilters() {
 		return Arrays.asList(
 			new MappedFilter<>("NODE", "uuid", "Filters by uuid", StringFilter.filter(), Node::getUuid),
-			new MappedFilter<>("NODE", "schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema, Pair.pair("NODE", "schema")),
+			new MappedFilter<>("NODE", "schema", "Filters by Schema", SchemaFilter.filter(), Node::getSchema),
 			new MappedFilter<>("NODE", "language", "Filters by Language", StringFilter.filter(), Node::getLanguage),
 			new MappedFilter<>("NODE", "name", "Filters by name", StringFilter.filter(), Node::getName),
 			new MappedFilter<>("NODE", "published", "Filters by published state", BooleanFilter.filter(), Node::isPublished),
