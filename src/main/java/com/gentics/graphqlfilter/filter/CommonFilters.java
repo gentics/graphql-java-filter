@@ -1,8 +1,15 @@
 package com.gentics.graphqlfilter.filter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
+
+import com.gentics.graphqlfilter.filter.operation.Combiner;
+import com.gentics.graphqlfilter.filter.operation.FilterOperation;
+import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 
 import graphql.schema.GraphQLInputType;
 import graphql.schema.GraphQLList;
@@ -64,7 +71,24 @@ public class CommonFilters {
 			public boolean isSortable() {
 				return false;
 			}
+
+			@Override
+			public FilterOperation<?> createFilterOperation(FilterQuery<?, List<Q>> query) throws UnformalizableQuery {
+				return createCombinedFilterOperation(filter, query, Combiner::or);
+			}
 		};
+	}
+
+	private static <O, Q> FilterOperation<?> createCombinedFilterOperation(Filter<O, Q> filter, FilterQuery<?, List<Q>> query, Function<List<FilterOperation<?>>, FilterOperation<?>> combiner) throws UnformalizableQuery {
+		List<FilterOperation<?>> args = new ArrayList<>();
+		for (Q q: query.getQuery()) {
+			args.add(filter.createFilterOperation(new FilterQuery<>(
+				filter.getOwner().orElse(String.valueOf(query.getOwner())), 
+				query.getField(), 
+				q, 
+				query.getMaybeJoins())));
+		}
+		return combiner.apply(args);
 	}
 
 	private static <T, Q> FilterField<T, List<Q>> andFilter(Filter<T, Q> filter, GraphQLInputType type) {
@@ -96,6 +120,11 @@ public class CommonFilters {
 			public boolean isSortable() {
 				return false;
 			}
+
+			@Override
+			public FilterOperation<?> createFilterOperation(FilterQuery<?, List<Q>> query) throws UnformalizableQuery {
+				return createCombinedFilterOperation(filter, query, Combiner::and);
+			}
 		};
 	}
 
@@ -124,6 +153,15 @@ public class CommonFilters {
 			@Override
 			public boolean isSortable() {
 				return false;
+			}
+
+			@Override
+			public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
+				return Combiner.not(filter.createFilterOperation(new FilterQuery<>(
+					filter.getOwner().orElse(String.valueOf(query.getOwner())), 
+					query.getField(), 
+					query.getQuery(), 
+					query.getMaybeJoins())));
 			}
 		};
 	}
