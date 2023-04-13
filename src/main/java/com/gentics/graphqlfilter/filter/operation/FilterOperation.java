@@ -1,9 +1,9 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.gentics.graphqlfilter.util.FilterUtil;
 
@@ -42,7 +42,7 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	default Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent) {
-		return getOperands().stream().map(o -> o.getJoins(parent)).reduce(Map.class.cast(new HashMap<>()), (map, o) -> FilterUtil.addFluent(map, o), (a, b) -> a);
+	default Set<Join> getJoins(Set<Join> parent) {
+		return getOperands().stream().map(o -> o.getJoins(parent)).reduce(Set.class.cast(new HashSet<>()), (map, o) -> FilterUtil.addFluent(map, o), (a, b) -> a);
 	}
 }

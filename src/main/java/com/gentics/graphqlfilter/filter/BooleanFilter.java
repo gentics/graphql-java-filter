@@ -1,6 +1,13 @@
 package com.gentics.graphqlfilter.filter;
 
+import java.util.Optional;
 import java.util.function.Predicate;
+
+import com.gentics.graphqlfilter.filter.operation.Combiner;
+import com.gentics.graphqlfilter.filter.operation.Comparison;
+import com.gentics.graphqlfilter.filter.operation.FilterOperation;
+import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 
 import graphql.Scalars;
 import graphql.schema.GraphQLInputType;
@@ -27,5 +34,10 @@ public class BooleanFilter implements Filter<Boolean, Boolean> {
 	@Override
 	public Predicate<Boolean> createPredicate(Boolean query) {
 		return query::equals;
+	}
+
+	@Override
+	public FilterOperation<?> createFilterOperation(FilterQuery<?, Boolean> query) throws UnformalizableQuery {
+		return Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false));
 	}
 }

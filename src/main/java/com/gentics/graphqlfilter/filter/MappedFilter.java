@@ -1,15 +1,16 @@
 package com.gentics.graphqlfilter.filter;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
+import com.gentics.graphqlfilter.filter.operation.Join;
 import com.gentics.graphqlfilter.filter.operation.JoinPart;
 import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 
@@ -118,8 +119,8 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
-		Map<JoinPart, JoinPart> joins = new HashMap<>(getJoins());
-		query.getMaybeJoins().ifPresent(join -> joins.putAll(join));
+		Set<Join> joins = new HashSet<>(getJoins());
+		query.getMaybeJoins().ifPresent(join -> joins.addAll(join));
 		return delegate.createFilterOperation(
 				new FilterQuery<>(
 						getOwner().orElse(String.valueOf(query.getOwner())), 
@@ -138,11 +139,11 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 * 
 	 * @return
 	 */
-	public Map<JoinPart, JoinPart> getJoins() {
+	public Set<Join> getJoins() {
 		return maybeJoin
-				.map(join -> Pair.pair(new JoinPart(owner, join.first), new JoinPart(delegate.getOwner().orElse(join.second.getTable()), join.second.getField())))
-				.map(join -> Collections.singletonMap(join.first, join.second))
-				.orElse(new HashMap<>());
+				.map(join -> new Join(new JoinPart(owner, join.first), new JoinPart(delegate.getOwner().orElse(join.second.getTable()), join.second.getField())))
+				.map(join -> Collections.singleton(join))
+				.orElse(new HashSet<>());
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -17,9 +17,9 @@ public class FilterQuery<O, Q> {
 	private final O owner;
 	private final Q query;
 	private final String field;
-	private final Optional<Map<JoinPart, JoinPart>> maybeJoins;
+	private final Optional<Set<Join>> maybeJoins;
 
-	public FilterQuery(O owner, String field, Q query, Optional<Map<JoinPart, JoinPart>> maybeJoins) {
+	public FilterQuery(O owner, String field, Q query, Optional<Set<Join>> maybeJoins) {
 		this.owner = owner;
 		this.field = field;
 		this.query = query;
@@ -92,7 +92,7 @@ public class FilterQuery<O, Q> {
 	 * 
 	 * @return
 	 */
-	public Optional<Map<JoinPart, JoinPart>> getMaybeJoins() {
+	public Optional<Set<Join>> getMaybeJoins() {
 		return maybeJoins;
 	}
 

@@ -1,7 +1,7 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.gentics.graphqlfilter.util.FilterUtil;
 
@@ -17,7 +17,7 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	private final T owner;
 	private final String field;
 	private final Optional<String> alias;
-	private final Optional<Map<JoinPart, JoinPart>> joins;
+	private final Optional<Set<Join>> joins;
 
 	/**
 	 * Constructor.
@@ -36,7 +36,7 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	 * @param field
 	 * @param alias
 	 */
-	public FieldOperand(T owner, String field, Optional<Map<JoinPart, JoinPart>> joins, Optional<String> alias) {
+	public FieldOperand(T owner, String field, Optional<Set<Join>> joins, Optional<String> alias) {
 		this.owner = owner;
 		this.field = field;
 		this.alias = alias;
@@ -63,7 +63,7 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	}
 
 	@Override
-	public Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent) {
+	public Set<Join> getJoins(Set<Join> parent) {
 		return joins.map(j -> FilterUtil.addFluent(j, parent)).orElse(parent);
 	}
 

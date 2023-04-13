@@ -1,7 +1,7 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A literal filter operand.
@@ -42,7 +42,7 @@ public class LiteralOperand<T> implements FilterOperand<T> {
 	}
 
 	@Override
-	public Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent) {
+	public Set<Join> getJoins(Set<Join> parent) {
 		return parent;
 	}
 

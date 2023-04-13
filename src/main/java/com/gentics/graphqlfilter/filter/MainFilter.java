@@ -4,11 +4,12 @@ import static graphql.schema.GraphQLInputObjectType.newInputObject;
 
 import java.security.InvalidParameterException;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import com.gentics.graphqlfilter.Sorting;
 import com.gentics.graphqlfilter.filter.operation.Combiner;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
-import com.gentics.graphqlfilter.filter.operation.JoinPart;
+import com.gentics.graphqlfilter.filter.operation.Join;
 import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 import com.gentics.graphqlfilter.util.Lazy;
 
@@ -167,8 +168,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Map<String, ?>> query) throws UnformalizableQuery {
 		try {
-			Map<JoinPart, JoinPart> joins = new HashMap<>();
-			query.getMaybeJoins().ifPresent(joins::putAll);
+			Set<Join> joins = new HashSet<>();
+			query.getMaybeJoins().ifPresent(joins::addAll);
 			List<FilterOperation<?>> operations = query.getQuery().entrySet().stream()
 				.map(entry -> findFilter(entry.getKey())
 						.map(f -> {

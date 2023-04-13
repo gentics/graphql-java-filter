@@ -1,6 +1,6 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.Map;
+import java.util.Set;
 
 /**
  * A formalized filter part that may be presented in a SQL-like form.
@@ -23,5 +23,5 @@ public interface Sqlable {
 	 * @param parent
 	 * @return
 	 */
-	Map<JoinPart, JoinPart> getJoins(Map<JoinPart, JoinPart> parent);
+	Set<Join> getJoins(Set<Join> parent);
 }

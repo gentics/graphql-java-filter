@@ -1,7 +1,7 @@
 package com.gentics.graphqlfilter.util;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -11,12 +11,17 @@ public interface FilterUtil {
 	}
 
 	@SafeVarargs
-	static <U, T extends List<U>> T addFluent(T list, U... args) {
+	static <U, T extends Collection<U>> T addFluent(T list, U... args) {
 		list.addAll(Arrays.asList(args));
 		return list;
 	}
 
-	static <U, T extends List<U>> T removeFluent(T list, U arg) {
+	static <U, T extends Collection<U>> T addFluent(T list, T arg) {
+		list.addAll(arg);
+		return list;
+	}
+
+	static <U, T extends Collection<U>> T removeFluent(T list, U arg) {
 		list.remove(arg);
 		return list;
 	}

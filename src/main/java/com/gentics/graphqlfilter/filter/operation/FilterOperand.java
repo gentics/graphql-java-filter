@@ -1,8 +1,8 @@
 package com.gentics.graphqlfilter.filter.operation;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A formal representation of a filter operand.
@@ -39,7 +39,7 @@ public interface FilterOperand<T> extends Sqlable {
 	 * 
 	 * @return
 	 */
-	default Map<JoinPart, JoinPart> getJoins() {
-		return getJoins(Collections.emptyMap());
+	default Set<Join> getJoins() {
+		return getJoins(Collections.emptySet());
 	}
 }
