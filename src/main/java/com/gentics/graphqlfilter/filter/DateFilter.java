@@ -13,6 +13,7 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -55,6 +56,9 @@ public class DateFilter extends MainFilter<Long> {
 			FilterField.create("equals", "Compares the date to the given ISO-8601 date for equality.", GraphQLString,
 				dateTimePredicate(Instant::equals),
 				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
+			FilterField.create("ne", "Compares the date to the given ISO-8601 date for inequality.", GraphQLString,
+					dateTimePredicate((i1, i2) -> !Objects.equals(i1, i2)),
+					Optional.of(query -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
 			FilterField.create("oneOf", "Tests if the date is equal to one of the given ISO-8601 dates.", GraphQLList.list(GraphQLString),
 				this::oneOf, 
 				Optional.of(query -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDates)))),
