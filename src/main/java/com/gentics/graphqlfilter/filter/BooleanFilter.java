@@ -3,7 +3,6 @@ package com.gentics.graphqlfilter.filter;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import com.gentics.graphqlfilter.filter.operation.Combiner;
 import com.gentics.graphqlfilter.filter.operation.Comparison;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
