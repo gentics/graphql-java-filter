@@ -42,4 +42,9 @@ public class Join {
 		Join other = (Join) obj;
 		return Objects.equals(left, other.left) && Objects.equals(right, other.right);
 	}
+
+	@Override
+	public String toString() {
+		return "Join [left=" + left + ", right=" + right + "]";
+	}
 }
