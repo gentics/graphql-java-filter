@@ -61,7 +61,7 @@ public class NumberFilter extends MainFilter<BigDecimal> {
 				"Compares two numbers for equality. Be careful when comparing floating point numbers, they might be not exact. In that case, use closeTo instead.",
 				GraphQLBigDecimal, query -> nullablePredicate(val -> val.compareTo(query) == 0),
 				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false)))),
-			FilterField.<BigDecimal, BigDecimal>create("ne",
+			FilterField.<BigDecimal, BigDecimal>create("notEquals",
 					"Compares two numbers for inequality. Be careful when comparing floating point numbers, they might be not exact. In that case, use closeTo instead.",
 					GraphQLBigDecimal, query -> nullablePredicate(val -> val.compareTo(query) != 0),
 					Optional.of(query -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false)))),
