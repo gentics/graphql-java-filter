@@ -51,6 +51,13 @@ public class StringFilter extends MainFilter<String> {
 					Optional.of((query) -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
 			FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, 
 					query -> nullablePredicate(Pattern.compile(query).asPredicate()),
-					Optional.empty()));
+					Optional.empty()),
+			FilterField.<String, String>create("like", "Checks if the string matches the given SQL LIKE expression.", GraphQLString, 
+					query -> nullablePredicate(Pattern.compile(likeToRegex(query)).asPredicate()),
+					Optional.of((query) -> Comparison.like(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))));
+	}
+
+	private String likeToRegex(String likeQuery) {
+		return likeQuery.replace(".", "\\.").replace("%", ".*?").replace("_", ".");
 	}
 }

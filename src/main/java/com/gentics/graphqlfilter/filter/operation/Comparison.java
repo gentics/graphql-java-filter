@@ -62,6 +62,17 @@ public class Comparison implements ComparisonOperation {
 	}
 
 	/**
+	 * Likeness comparison.
+	 * 
+	 * @param left
+	 * @param right
+	 * @return
+	 */
+	public static final Comparison like(FilterOperand<?> left, FilterOperand<?> right) {
+		return new Comparison("LIKE", left, right);
+	}
+
+	/**
 	 * Inequality `<>` comparison.
 	 * 
 	 * @param left
