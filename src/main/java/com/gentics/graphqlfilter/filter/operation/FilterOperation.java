@@ -1,5 +1,6 @@
 package com.gentics.graphqlfilter.filter.operation;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -32,17 +33,66 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 	 */
 	List<T> getOperands();
 
+	/**
+	 * Is this a combination of operations?
+	 * 
+	 * @return
+	 */
 	default Optional<List<FilterOperation<?>>> maybeCombination() {
 		return Optional.empty();
 	}
 
+	/**
+	 * Is this a comparison operation?
+	 * 
+	 * @return
+	 */
 	default Optional<Pair<FilterOperand<?>, FilterOperand<?>>> maybeComparison() {
 		return Optional.empty();
+	}
+
+	/**
+	 * Should a representation of this operation be wrapped in "()" brackets for syntax secure?
+	 * 
+	 * @return
+	 */
+	default boolean shouldBracket() {
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	default Set<Join> getJoins(Set<Join> parent) {
 		return getOperands().stream().map(o -> o.getJoins(parent)).reduce(Set.class.cast(new HashSet<>()), (map, o) -> FilterUtil.addFluent(map, o), (a, b) -> a);
+	}
+
+	/**
+	 * An empty NOOP operation.
+	 * 
+	 * @return
+	 */
+	public static FilterOperation<?> noOp() {
+		return new FilterOperation<Sqlable>() {
+
+			@Override
+			public String toSql() {
+				return "";
+			}
+
+			@Override
+			public String getOperator() {
+				return "";
+			}
+
+			@Override
+			public List<Sqlable> getOperands() {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public boolean shouldBracket() {
+				return false;
+			}
+		};
 	}
 }

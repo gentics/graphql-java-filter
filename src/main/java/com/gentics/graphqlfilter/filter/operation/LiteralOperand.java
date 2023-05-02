@@ -2,6 +2,8 @@ package com.gentics.graphqlfilter.filter.operation;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * A literal filter operand.
@@ -26,9 +28,14 @@ public class LiteralOperand<T> implements FilterOperand<T> {
 		this.value = value;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String toSql() {
-		return escape ? String.format("'%s'", value) : String.valueOf(value);
+		if (value != null && value instanceof Iterable) {
+			return (String) StreamSupport.stream(Iterable.class.cast(value).spliterator(), false).map(this::format).collect(Collectors.joining(",", "[", "]"));
+		} else {
+			return format(value);
+		}
 	}
 
 	@Override
@@ -54,5 +61,9 @@ public class LiteralOperand<T> implements FilterOperand<T> {
 	@Override
 	public Optional<String> maybeGetOwner() {
 		return Optional.empty();
+	}
+
+	private String format(Object value) {
+		return escape ? String.format("'%s'", value) : String.valueOf(value);
 	}
 }

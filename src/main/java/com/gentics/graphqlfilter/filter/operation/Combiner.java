@@ -68,7 +68,7 @@ public class Combiner implements CombinerOperation {
 	 * @return
 	 */
 	public static final Combiner not(FilterOperation<?> operand) {
-		return new Combiner("NOT", Arrays.asList(operand));
+		return new Combiner("NOT", Arrays.asList(FilterOperation.noOp(), operand));
 	}
 
 	@Override

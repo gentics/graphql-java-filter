@@ -3,7 +3,6 @@ package com.gentics.graphqlfilter.filter.operation;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A generic comparison operation implementation.
@@ -137,7 +136,7 @@ public class Comparison implements ComparisonOperation {
 		return new Comparison("IN", left, right) {
 			@Override
 			public String toSql() {
-				return String.format(" ( %s %s ( %s ) ) ", getLeft().toSql(), getOperator(), right.getValue().stream().map(String::valueOf).collect(Collectors.joining(",")));
+				return String.format(" ( %s %s [ %s ] ) ", getLeft().toSql(), getOperator(), getRight().toSql());
 			}
 		};
 	}

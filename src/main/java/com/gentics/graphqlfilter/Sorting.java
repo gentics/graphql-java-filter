@@ -13,14 +13,13 @@ import graphql.schema.GraphQLEnumType;
  *
  */
 public enum Sorting {
-	ASCENDING,	DESCENDING, UNSORTED;
+	ASCENDING,	DESCENDING;
 
 	public static final String SORT_ORDER_NAME = "SortOrder";
 
 	private static final Lazy<GraphQLEnumType> type = new Lazy<>(() -> newEnum().name(SORT_ORDER_NAME).description("Sort order")
 			.value(ASCENDING.name().toUpperCase(), ASCENDING, "Ascending")
-			.value(DESCENDING.name().toUpperCase(), DESCENDING, "Descending")
-			.value(UNSORTED.name(), UNSORTED, "No sorting").build());
+			.value(DESCENDING.name().toUpperCase(), DESCENDING, "Descending").build());
 
 	public static final GraphQLEnumType getSortingEnumType() {
 		return type.get();
