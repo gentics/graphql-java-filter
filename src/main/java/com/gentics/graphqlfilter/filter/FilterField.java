@@ -77,6 +77,28 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	 *            The Java type mapped from the GraphQL input type
 	 */
 	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<Function<FilterQuery<?, Q>, FilterOperation<?>>> createFilterDefinition) {
+		return create(name, description, type, createPredicate, createFilterDefinition, false);
+	}
+
+	/**
+	 * A helper method to easily create a FilterField with an optional null check on a value
+	 *
+	 * @param name
+	 *            name of the filter
+	 * @param description
+	 *            description of the filter
+	 * @param type
+	 *            GraphQl type of the filter
+	 * @param createPredicate
+	 *            a function that creates a predicate based on the filter the user defined
+	 * @param checkNullValue
+	 *            should value be null-checked?
+	 * @param <T>
+	 *            The predicate input type
+	 * @param <Q>
+	 *            The Java type mapped from the GraphQL input type
+	 */
+	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<Function<FilterQuery<?, Q>, FilterOperation<?>>> createFilterDefinition, boolean checkNullValue) {
 		return new FilterField<T, Q>() {
 			@Override
 			public String getName() {
@@ -90,7 +112,8 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 
 			@Override
 			public Predicate<T> createPredicate(Q query) {
-				return createPredicate.apply(query);
+				Predicate<T> predicate = createPredicate.apply(query);
+				return checkNullValue ? ( val -> val == null ? false : predicate.test(val) ) : predicate;
 			}
 
 			@Override
