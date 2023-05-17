@@ -28,12 +28,12 @@ import graphql.util.Pair;
  *            The Java representation of the GraphQLInputType of this query.
  */
 public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
-	private final Filter<T, Q> delegate;
-	private final Function<I, T> javaMapper;
-	private final String name;
-	private final String description;
-	private final String owner;
-	private final Optional<Pair<String, JoinPart>> maybeJoin;
+	protected final Filter<T, Q> delegate;
+	protected final Function<I, T> javaMapper;
+	protected final String name;
+	protected final String description;
+	protected final String owner;
+	protected final Optional<Pair<String, JoinPart>> maybeJoin;
 
 	/**
 	 * Create a MappedFilter.

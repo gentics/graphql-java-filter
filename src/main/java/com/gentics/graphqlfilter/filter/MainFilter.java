@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -34,7 +33,7 @@ import graphql.schema.GraphQLTypeReference;
  * @param <T>
  *            The predicate input type
  */
-public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
+public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedFilter<T, Map<String, ?>> {
 
 	protected Optional<Map<String, FilterField<T, ?>>> maybeFilters = Optional.empty();
 	protected Optional<GraphQLInputType> maybeType = Optional.empty();
@@ -182,18 +181,22 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 												Optional.ofNullable(joins)));
 							} catch (UnformalizableQuery noop) {
 								// Stream API and checked exceptions are not befriended, so we wrap the origin here...
-								throw new NoSuchElementException(noop.getLocalizedMessage());
+								throw new IllegalArgumentException(noop);
 							}
 						}).orElseThrow(() -> new InvalidParameterException(String.format("Filter Operation '%s' not found", entry.getKey()))))
 				.collect(Collectors.toList());
 			if (operations.size() > 0) {
 				return Combiner.and(operations);
 			} else {
-				throw new UnformalizableQuery("No operational filters available");
+				throw new UnformalizableQuery(query.getField(), "No operational filters available");
 			}
-		} catch (NoSuchElementException e) {
+		} catch (Throwable e) {
 			// ... and unwrap here
-			throw new UnformalizableQuery(e.getMessage());
+			if (e.getCause() instanceof UnformalizableQuery) {
+				throw (UnformalizableQuery) e.getCause();
+			} else {
+				throw e;
+			}
 		}
 	}
 
@@ -225,12 +228,9 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>> {
 		return ownerType;
 	}
 
+	@Override
 	public String getName() {
 		return name;
-	}
-
-	public String getSortingName() {
-		return getName() + "Sort";
 	}
 
 	public String getDescription() {

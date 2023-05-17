@@ -75,6 +75,6 @@ public interface Filter<T, Q> {
 	 * @throws UnformalizableQuery
 	 */
 	default FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
-		throw new UnformalizableQuery("No operation for this query: " + String.valueOf(query));
+		throw new UnformalizableQuery(query.getField(), "No operation for this query: " + String.valueOf(query));
 	}
 }

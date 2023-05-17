@@ -126,7 +126,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 				if (createFilterDefinition.isPresent()) {
 					return createFilterDefinition.map(f -> f.apply(query)).get();
 				} else {
-					throw new UnformalizableQuery("No operation for this query: " + String.valueOf(query));
+					throw new UnformalizableQuery(name, "No operation for this query: " + String.valueOf(query));
 				}
 			}
 
