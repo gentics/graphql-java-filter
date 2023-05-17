@@ -17,6 +17,9 @@ import graphql.schema.GraphQLList;
  */
 public class StringFilter extends MainFilter<String> {
 
+	private static final String UNDERSCORE_PLACEHOLDER = "\\{UNS}\\";
+	private static final String PERCENT_PLACEHOLDER = "\\{REM}\\";
+	private static final String DOT_PLACEHOLDER = "\\{DOT}\\";
 	private static StringFilter instance;
 
 	/**
@@ -58,6 +61,9 @@ public class StringFilter extends MainFilter<String> {
 	}
 
 	private String likeToRegex(String likeQuery) {
-		return likeQuery.replace(".", "\\.").replace("%", ".*?").replace("_", ".");
+		return likeQuery
+				.replace("\\.", DOT_PLACEHOLDER).replace("\\%", PERCENT_PLACEHOLDER).replace("\\_", UNDERSCORE_PLACEHOLDER)
+				.replace(".", "\\.").replace("%", ".*?").replace("_", ".")
+				.replace(DOT_PLACEHOLDER, ".").replace(PERCENT_PLACEHOLDER, "%").replace(UNDERSCORE_PLACEHOLDER, "_");
 	}
 }

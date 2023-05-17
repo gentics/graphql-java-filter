@@ -16,12 +16,11 @@ import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
 import graphql.schema.GraphQLEnumType.Builder;
 import graphql.schema.GraphQLInputType;
 
-public class EnumFilter<T extends Enum<?>> implements Filter<T, String> {
+public class EnumFilter<T extends Enum<?>> implements Filter<T, T> {
 
 	private static final Map<Class<? extends Enum<?>>, EnumFilter<?>> instances = new HashMap<>();
 
 	private final GraphQLInputType type;
-	private final Class<T> enumClass;
 
 	/**
 	 * Get the singleton filter
@@ -37,7 +36,6 @@ public class EnumFilter<T extends Enum<?>> implements Filter<T, String> {
 		Arrays.stream(enumClass.getEnumConstants()).forEach(item -> builder.value(item.name(), item, item.toString()));
 		
 		this.type = builder.build();
-		this.enumClass = enumClass;
 	}
 
 	@Override
@@ -45,15 +43,13 @@ public class EnumFilter<T extends Enum<?>> implements Filter<T, String> {
 		return type;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes", "static-access" })
 	@Override
-	public Predicate<T> createPredicate(String query) {
-		Class untypedClass = enumClass;
-		return val -> val == null ? false : enumClass.getEnumConstants()[0].valueOf(untypedClass, query) == val;
+	public Predicate<T> createPredicate(T query) {
+		return query::equals;
 	}
 
 	@Override
-	public FilterOperation<?> createFilterOperation(FilterQuery<?, String> query) throws UnformalizableQuery {
+	public FilterOperation<?> createFilterOperation(FilterQuery<?, T> query) throws UnformalizableQuery {
 		return Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false));
 	}
 }
