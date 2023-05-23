@@ -21,11 +21,11 @@ public interface FilterOperand<T> extends Sqlable {
 	T getValue();
 
 	/**
-	 * Is this operand a field name?
+	 * Is this operand a literal?
 	 * 
 	 * @return
 	 */
-	boolean isFieldName();
+	boolean isLiteral();
 
 	/**
 	 * Get an owner type if available.

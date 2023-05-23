@@ -1,5 +1,7 @@
 package com.gentics.graphqlfilter.filter.operation;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import graphql.util.Pair;
@@ -26,6 +28,11 @@ public interface ComparisonOperation extends FilterOperation<FilterOperand<?>> {
 	 * @return
 	 */
 	FilterOperand<?> getRight();
+
+	@Override
+	default List<FilterOperand<?>> getOperands() {
+		return Arrays.asList(getLeft(), getRight());
+	}
 
 	@Override
 	default Optional<Pair<FilterOperand<?>, FilterOperand<?>>> maybeComparison() {

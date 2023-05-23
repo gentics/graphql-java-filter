@@ -54,8 +54,8 @@ public class LiteralOperand<T> implements FilterOperand<T> {
 	}
 
 	@Override
-	public boolean isFieldName() {
-		return false;
+	public boolean isLiteral() {
+		return true;
 	}
 
 	@Override

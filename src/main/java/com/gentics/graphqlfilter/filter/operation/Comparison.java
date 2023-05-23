@@ -1,8 +1,6 @@
 package com.gentics.graphqlfilter.filter.operation;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A generic comparison operation implementation.
@@ -32,11 +30,6 @@ public class Comparison implements ComparisonOperation {
 	@Override
 	public String getOperator() {
 		return operator;
-	}
-
-	@Override
-	public List<FilterOperand<?>> getOperands() {
-		return Arrays.asList(left, right);
 	}
 
 	@Override

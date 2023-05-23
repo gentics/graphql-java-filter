@@ -73,8 +73,8 @@ public class FieldOperand<T> implements FilterOperand<String> {
 	}
 
 	@Override
-	public boolean isFieldName() {
-		return true;
+	public boolean isLiteral() {
+		return false;
 	}
 
 	@Override
