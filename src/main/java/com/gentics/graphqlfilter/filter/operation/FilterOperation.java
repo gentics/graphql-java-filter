@@ -60,6 +60,15 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 		return true;
 	}
 
+	/**
+	 * Does this operation have only one operand?
+	 * 
+	 * @return
+	 */
+	default boolean isUnary() {
+		return false;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	default Set<Join> getJoins(Set<Join> parent) {

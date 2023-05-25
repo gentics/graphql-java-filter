@@ -42,4 +42,34 @@ public interface FilterOperand<T> extends Sqlable {
 	default Set<Join> getJoins() {
 		return getJoins(Collections.emptySet());
 	}
+
+	static FilterOperand<?> noOp() {
+		return new FilterOperand<String>() {
+
+			@Override
+			public String toSql() {
+				return "";
+			}
+
+			@Override
+			public Set<Join> getJoins(Set<Join> parent) {
+				return Collections.emptySet();
+			}
+
+			@Override
+			public String getValue() {
+				return "";
+			}
+
+			@Override
+			public boolean isLiteral() {
+				return false;
+			}
+
+			@Override
+			public Optional<String> maybeGetOwner() {
+				return Optional.empty();
+			}
+		};
+	}
 }

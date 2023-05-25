@@ -14,6 +14,7 @@ public class Combiner implements CombinerOperation {
 
 	private final String operator;
 	private final List<FilterOperation<?>> operands;
+	private final boolean unary;
 
 	/**
 	 * Constructor.
@@ -22,8 +23,18 @@ public class Combiner implements CombinerOperation {
 	 * @param operands
 	 */
 	public Combiner(String operator, List<FilterOperation<?>> operands) {
+		this(operator, operands, false);
+	}
+	/**
+	 * Constructor.
+	 * 
+	 * @param operator 
+	 * @param operands
+	 */
+	public Combiner(String operator, List<FilterOperation<?>> operands, boolean unary) {
 		this.operator = operator;
 		this.operands = operands;
+		this.unary = unary;
 	}
 
 	@Override
@@ -34,6 +45,11 @@ public class Combiner implements CombinerOperation {
 	@Override
 	public List<FilterOperation<?>> getOperands() {
 		return operands;
+	}
+
+	@Override
+	public boolean isUnary() {
+		return unary;
 	}
 
 	@Override
@@ -68,7 +84,7 @@ public class Combiner implements CombinerOperation {
 	 * @return
 	 */
 	public static final Combiner not(FilterOperation<?> operand) {
-		return new Combiner("NOT", Arrays.asList(FilterOperation.noOp(), operand));
+		return new Combiner("NOT", Arrays.asList(FilterOperation.noOp(), operand), true);
 	}
 
 	@Override
