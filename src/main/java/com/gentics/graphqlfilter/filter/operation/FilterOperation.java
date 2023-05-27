@@ -20,6 +20,13 @@ import graphql.util.Pair;
 public interface FilterOperation<T extends Sqlable> extends Sqlable {
 
 	/**
+	 * Get name of a filter that initiated this operation.
+	 * 
+	 * @return
+	 */
+	String getInitiatingFilterName();
+
+	/**
 	 * Get an operator.
 	 * 
 	 * @return
@@ -101,6 +108,11 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 			@Override
 			public boolean shouldBracket() {
 				return false;
+			}
+
+			@Override
+			public String getInitiatingFilterName() {
+				return "";
 			}
 		};
 	}

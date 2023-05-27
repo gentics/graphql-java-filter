@@ -11,6 +11,7 @@ import java.util.Collection;
 public class Comparison implements ComparisonOperation {
 
 	private final String operator;
+	private final String initiatingFilterName;
 	private final FilterOperand<?> left;
 	private final FilterOperand<?> right;
 
@@ -21,10 +22,11 @@ public class Comparison implements ComparisonOperation {
 	 * @param left
 	 * @param right
 	 */
-	public Comparison(String operator, FilterOperand<?> left, FilterOperand<?> right) {
+	public Comparison(String operator, FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
 		this.operator = operator;
 		this.left = left;
 		this.right = right;
+		this.initiatingFilterName = initiatingFilterName;
 	}
 
 	@Override
@@ -49,8 +51,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 * @return
 	 */
-	public static final Comparison eq(FilterOperand<?> left, FilterOperand<?> right) {
-		return new Comparison("=", left, right);
+	public static final Comparison eq(FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		return new Comparison("=", left, right, initiatingFilterName);
 	}
 
 	/**
@@ -60,8 +62,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 * @return
 	 */
-	public static final Comparison like(FilterOperand<?> left, FilterOperand<?> right) {
-		return new Comparison("LIKE", left, right);
+	public static final Comparison like(FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		return new Comparison("LIKE", left, right, initiatingFilterName);
 	}
 
 	/**
@@ -71,8 +73,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 * @return
 	 */
-	public static final Comparison ne(FilterOperand<?> left, FilterOperand<?> right) {
-		return new Comparison("<>", left, right);
+	public static final Comparison ne(FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		return new Comparison("<>", left, right, initiatingFilterName);
 	}
 
 	/**
@@ -82,8 +84,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 * @return
 	 */
-	public static final Comparison gt(FilterOperand<?> left, FilterOperand<?> right) {
-		return new Comparison(">", left, right);
+	public static final Comparison gt(FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		return new Comparison(">", left, right, initiatingFilterName);
 	}
 
 	/**
@@ -93,8 +95,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 * @return
 	 */
-	public static final Comparison lt(FilterOperand<?> left, FilterOperand<?> right) {
-		return new Comparison("<", left, right);
+	public static final Comparison lt(FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		return new Comparison("<", left, right, initiatingFilterName);
 	}
 
 	/**
@@ -103,8 +105,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 * @return
 	 */
-	public static final Comparison gte(FilterOperand<?> left, FilterOperand<?> right) {
-		return new Comparison(">=", left, right);
+	public static final Comparison gte(FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		return new Comparison(">=", left, right, initiatingFilterName);
 	}
 
 	/**
@@ -114,8 +116,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 * @return
 	 */
-	public static final Comparison lte(FilterOperand<?> left, FilterOperand<?> right) {
-		return new Comparison("<=", left, right);
+	public static final Comparison lte(FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		return new Comparison("<=", left, right, initiatingFilterName);
 	}
 
 	/**
@@ -125,8 +127,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param right what are the set to check for inclusion against
 	 * @return
 	 */
-	public static final Comparison in(FilterOperand<?> left, LiteralOperand<? extends Collection<?>> right) {
-		return new Comparison("IN", left, right) {
+	public static final Comparison in(FilterOperand<?> left, LiteralOperand<? extends Collection<?>> right, String initiatingFilterName) {
+		return new Comparison("IN", left, right, initiatingFilterName) {
 			@Override
 			public String toSql() {
 				return String.format(" ( %s %s [ %s ] ) ", getLeft().toSql(), getOperator(), getRight().toSql());
@@ -140,8 +142,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param left
 	 * @return
 	 */
-	public static final Comparison isNull(FilterOperand<?> left) {
-		return new Comparison("IS", left, new LiteralOperand<>("NULL", false));
+	public static final Comparison isNull(FilterOperand<?> left, String initiatingFilterName) {
+		return new Comparison("IS", left, new LiteralOperand<>("NULL", false), initiatingFilterName);
 	}
 
 	/**
@@ -150,8 +152,8 @@ public class Comparison implements ComparisonOperation {
 	 * @param left
 	 * @return
 	 */
-	public static final Comparison isNotNull(FilterOperand<?> left) {
-		return new Comparison("IS NOT", left, new LiteralOperand<>("NULL", false));
+	public static final Comparison isNotNull(FilterOperand<?> left, String initiatingFilterName) {
+		return new Comparison("IS NOT", left, new LiteralOperand<>("NULL", false), initiatingFilterName);
 	}
 
 	/**
@@ -160,12 +162,17 @@ public class Comparison implements ComparisonOperation {
 	 * @param left
 	 * @return
 	 */
-	public static final Comparison dummy(boolean shouldSucceed) {
-		return new Comparison(shouldSucceed ? "=" : "<>", new LiteralOperand<>(1, false), new LiteralOperand<>(1, false));
+	public static final Comparison dummy(boolean shouldSucceed, String initiatingFilterName) {
+		return new Comparison(shouldSucceed ? "=" : "<>", new LiteralOperand<>(1, false), new LiteralOperand<>(1, false), initiatingFilterName);
 	}
 
 	@Override
 	public String toString() {
 		return "Comparison [operator=" + operator + ", left=" + left + ", right=" + right + "]";
+	}
+
+	@Override
+	public String getInitiatingFilterName() {
+		return initiatingFilterName;
 	}
 }

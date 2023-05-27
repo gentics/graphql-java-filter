@@ -14,20 +14,22 @@ import java.util.function.Function;
  */
 public class FilterQuery<O, Q> {
 
+	private final String initiatingFilterName;
 	private final O owner;
 	private final Q query;
 	private final String field;
 	private final Optional<Set<Join>> maybeJoins;
 
-	public FilterQuery(O owner, String field, Q query, Optional<Set<Join>> maybeJoins) {
+	public FilterQuery(O owner, String initiatingFilterName, String field, Q query, Optional<Set<Join>> maybeJoins) {
 		this.owner = owner;
+		this.initiatingFilterName = initiatingFilterName;
 		this.field = field;
 		this.query = query;
 		this.maybeJoins = maybeJoins;
 	}
 
-	public FilterQuery(O owner, String field, Q query) {
-		this(owner, field, query, Optional.empty());
+	public FilterQuery(O owner, String initiatingFilterName, String field, Q query) {
+		this(owner, initiatingFilterName, field, query, Optional.empty());
 	}
 
 	/**
@@ -99,5 +101,9 @@ public class FilterQuery<O, Q> {
 	@Override
 	public String toString() {
 		return "FilterQuery [owner=" + owner + ", query=" + query + ", field=" + field + ", maybeJoins=" + maybeJoins + "]";
+	}
+
+	public String getInitiatingFilterName() {
+		return initiatingFilterName;
 	}
 }

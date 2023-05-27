@@ -57,7 +57,9 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	static <T> FilterField<T, Boolean> isNull() {
 		return create("isNull", "Tests if the value is null", GraphQLBoolean, 
 				query -> value -> query == (value == null), 
-				Optional.of((query) -> query.getQuery() ? Comparison.isNull(query.makeFieldOperand(Optional.empty())) : Comparison.isNotNull(query.makeFieldOperand(Optional.empty())) ));
+				Optional.of((query) -> query.getQuery() 
+						? Comparison.isNull(query.makeFieldOperand(Optional.empty()), query.getInitiatingFilterName()) 
+						: Comparison.isNotNull(query.makeFieldOperand(Optional.empty()), query.getInitiatingFilterName()) ));
 	}
 
 	/**
@@ -99,6 +101,11 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	 *            The Java type mapped from the GraphQL input type
 	 */
 	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<Function<FilterQuery<?, Q>, FilterOperation<?>>> createFilterDefinition, boolean checkNullValue) {
+		return create(name, description, type, createPredicate, createFilterDefinition, checkNullValue, Optional.empty());
+	}
+	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, 
+					Optional<Function<FilterQuery<?, Q>, FilterOperation<?>>> createFilterDefinition, boolean checkNullValue, Optional<String> maybeOwner) {
+
 		return new FilterField<T, Q>() {
 			@Override
 			public String getName() {
@@ -133,6 +140,11 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 			@Override
 			public boolean isSortable() {
 				return false;
+			}
+
+			@Override
+			public Optional<String> getOwner() {
+				return maybeOwner;
 			}
 		};
 	}

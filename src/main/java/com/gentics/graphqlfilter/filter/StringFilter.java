@@ -42,22 +42,22 @@ public class StringFilter extends MainFilter<String> {
 			FilterField.isNull(),
 			FilterField.create("equals", "Compares two strings for equality", GraphQLString, 
 					query -> query::equals, 
-					Optional.of((query) -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
+					Optional.of((query) -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true), query.getInitiatingFilterName()))),
 			FilterField.create("notEquals", "Compares two strings for equality", GraphQLString, 
 					query -> value -> !query.equals(value), 
-					Optional.of((query) -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
+					Optional.of((query) -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true), query.getInitiatingFilterName()))),
 			FilterField.<String, String>create("contains", "Checks if the string contains the given substring.", GraphQLString, 
 					query -> nullablePredicate(input -> input.contains(query)),
 					Optional.empty()),
 			FilterField.<String, List<String>>create("oneOf", "Checks if the string is equal to one of the given strings", GraphQLList.list(GraphQLString), 
 					query -> query::contains,
-					Optional.of((query) -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))),
+					Optional.of((query) -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true), query.getInitiatingFilterName()))),
 			FilterField.<String, String>create("regex", "Checks if the string matches the given regular expression.", GraphQLString, 
 					query -> nullablePredicate(Pattern.compile(query).asPredicate()),
 					Optional.empty()),
 			FilterField.<String, String>create("like", "Checks if the string matches the given SQL LIKE expression.", GraphQLString, 
 					query -> nullablePredicate(Pattern.compile(likeToRegex(query)).asPredicate()),
-					Optional.of((query) -> Comparison.like(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))));
+					Optional.of((query) -> Comparison.like(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true), query.getInitiatingFilterName()))));
 	}
 
 	private String likeToRegex(String likeQuery) {

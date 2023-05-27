@@ -39,6 +39,6 @@ public class LimitedSetFilter<T, Q> implements Filter<T, Q> {
 
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
-		return Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false));
+		return Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false), query.getInitiatingFilterName());
 	}
 }

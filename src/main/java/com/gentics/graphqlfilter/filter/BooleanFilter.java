@@ -37,6 +37,6 @@ public class BooleanFilter implements Filter<Boolean, Boolean> {
 
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Boolean> query) throws UnformalizableQuery {
-		return Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false));
+		return Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false), query.getInitiatingFilterName());
 	}
 }

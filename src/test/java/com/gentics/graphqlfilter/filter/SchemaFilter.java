@@ -42,6 +42,6 @@ public class SchemaFilter extends MainFilter<Schema> {
 			new MappedFilter<>("SCHEMA", "uuid", "Filters by uuid", StringFilter.filter(), Schema::getUuid),
 			FilterField.<Schema, String>create("is", "Filters by Schema Type", getSchemaEnum(),
 				name -> nullablePredicate(schema -> schema.getName().equals(name)), 
-				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true)))));
+				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true), query.getInitiatingFilterName()))));
 	}
 }

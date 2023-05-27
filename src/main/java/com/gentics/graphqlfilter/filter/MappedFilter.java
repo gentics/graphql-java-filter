@@ -124,6 +124,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 		return delegate.createFilterOperation(
 				new FilterQuery<>(
 						getOwner().orElse(String.valueOf(query.getOwner())), 
+						getName(),
 						query.getField(), 
 						query.getQuery(), 
 						Optional.of(joins)));

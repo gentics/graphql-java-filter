@@ -176,6 +176,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 								return f.createFilterOperation(
 										new FilterQuery<>(
 												f.getOwner().orElse(String.valueOf(query.getOwner())), 
+												getName(),
 												f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), 
 												entry.getValue(), 
 												Optional.ofNullable(joins)));
@@ -186,7 +187,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 						}).orElseThrow(() -> new InvalidParameterException(String.format("Filter Operation '%s' not found", entry.getKey()))))
 				.collect(Collectors.toList());
 			if (operations.size() > 0) {
-				return Combiner.and(operations);
+				return Combiner.and(operations, query.getInitiatingFilterName());
 			} else {
 				throw new UnformalizableQuery(query.getField(), "No operational filters available");
 			}

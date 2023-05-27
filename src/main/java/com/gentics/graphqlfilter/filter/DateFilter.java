@@ -55,27 +55,27 @@ public class DateFilter extends MainFilter<Long> {
 			FilterField.isNull(),
 			FilterField.create("equals", "Compares the date to the given ISO-8601 date for equality.", GraphQLString,
 				dateTimePredicate(Instant::equals),
-				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
+				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate), query.getInitiatingFilterName()))),
 			FilterField.create("notEquals", "Compares the date to the given ISO-8601 date for inequality.", GraphQLString,
 					dateTimePredicate((i1, i2) -> !Objects.equals(i1, i2)),
-					Optional.of(query -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
+					Optional.of(query -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate), query.getInitiatingFilterName()))),
 			FilterField.create("oneOf", "Tests if the date is equal to one of the given ISO-8601 dates.", GraphQLList.list(GraphQLString),
 				this::oneOf, 
-				Optional.of(query -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDates)))),
+				Optional.of(query -> Comparison.in(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDates), query.getInitiatingFilterName()))),
 			FilterField.create("after", "Tests if the date is after the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isAfter),
-				Optional.of(query -> Comparison.gt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
+				Optional.of(query -> Comparison.gt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate), query.getInitiatingFilterName()))),
 			FilterField.create("before", "Tests if the date is before the given ISO-8601 date.", GraphQLString, dateTimePredicate(Instant::isBefore),
-				Optional.of(query -> Comparison.lt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate)))),
+				Optional.of(query -> Comparison.lt(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate), query.getInitiatingFilterName()))),
 			FilterField.<Long, Boolean>create("isFuture", "Tests if the date is in the future.", GraphQLBoolean,
 				query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isAfter(Instant.now()) == query),
 				Optional.of(query -> query.getQuery() 
-						? Comparison.gt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)) 
-						: Comparison.lte(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)))),
+						? Comparison.gt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true), query.getInitiatingFilterName()) 
+						: Comparison.lte(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true), query.getInitiatingFilterName()))),
 			FilterField.<Long, Boolean>create("isPast", "Tests if the date is in the past.", GraphQLBoolean,
 				query -> nullablePredicate(date -> Instant.ofEpochMilli(date).isBefore(Instant.now()) == query),
 				Optional.of(query -> query.getQuery() 
-						? Comparison.lt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true))
-						: Comparison.gte(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true)))));
+						? Comparison.lt(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true), query.getInitiatingFilterName())
+						: Comparison.gte(query.makeFieldOperand(Optional.empty()), new LiteralOperand<>(Instant.now(), true), query.getInitiatingFilterName()))));
 	}
 
 	private Function<String, Predicate<Long>> dateTimePredicate(BiPredicate<Instant, Instant> predicate) {

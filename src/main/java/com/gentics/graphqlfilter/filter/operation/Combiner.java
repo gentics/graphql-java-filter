@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
  */
 public class Combiner implements CombinerOperation {
 
+	private final String initiatingFilterName;
 	private final String operator;
 	private final List<FilterOperation<?>> operands;
 	private final boolean unary;
@@ -22,8 +23,8 @@ public class Combiner implements CombinerOperation {
 	 * @param operator 
 	 * @param operands
 	 */
-	public Combiner(String operator, List<FilterOperation<?>> operands) {
-		this(operator, operands, false);
+	public Combiner(String operator, List<FilterOperation<?>> operands, String initiatingFilterName) {
+		this(operator, operands, false, initiatingFilterName);
 	}
 	/**
 	 * Constructor.
@@ -31,10 +32,11 @@ public class Combiner implements CombinerOperation {
 	 * @param operator 
 	 * @param operands
 	 */
-	public Combiner(String operator, List<FilterOperation<?>> operands, boolean unary) {
+	public Combiner(String operator, List<FilterOperation<?>> operands, boolean unary, String initiatingFilterName) {
 		this.operator = operator;
 		this.operands = operands;
 		this.unary = unary;
+		this.initiatingFilterName = initiatingFilterName;
 	}
 
 	@Override
@@ -63,8 +65,8 @@ public class Combiner implements CombinerOperation {
 	 * @param operands
 	 * @return
 	 */
-	public static final Combiner and(List<FilterOperation<?>> operands) {
-		return new Combiner("AND", operands);
+	public static final Combiner and(List<FilterOperation<?>> operands, String initiatingFilterName) {
+		return new Combiner("AND", operands, initiatingFilterName);
 	}
 
 	/**
@@ -73,8 +75,8 @@ public class Combiner implements CombinerOperation {
 	 * @param operands
 	 * @return
 	 */
-	public static final Combiner or(List<FilterOperation<?>> operands) {
-		return new Combiner("OR", operands);
+	public static final Combiner or(List<FilterOperation<?>> operands, String initiatingFilterName) {
+		return new Combiner("OR", operands, initiatingFilterName);
 	}
 
 	/**
@@ -83,12 +85,16 @@ public class Combiner implements CombinerOperation {
 	 * @param operand
 	 * @return
 	 */
-	public static final Combiner not(FilterOperation<?> operand) {
-		return new Combiner("NOT", Arrays.asList(FilterOperation.noOp(), operand), true);
+	public static final Combiner not(FilterOperation<?> operand, String initiatingFilterName) {
+		return new Combiner("NOT", Arrays.asList(FilterOperation.noOp(), operand), true, initiatingFilterName);
 	}
 
 	@Override
 	public String toString() {
 		return "Combiner [operator=" + operator + ", operands=" + operands + "]";
+	}
+	@Override
+	public String getInitiatingFilterName() {
+		return initiatingFilterName;
 	}
 }

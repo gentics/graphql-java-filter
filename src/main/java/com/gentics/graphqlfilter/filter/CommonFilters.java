@@ -74,7 +74,7 @@ public class CommonFilters {
 
 			@Override
 			public FilterOperation<?> createFilterOperation(FilterQuery<?, List<Q>> query) throws UnformalizableQuery {
-				return createCombinedFilterOperation(filter, query, Combiner::or);
+				return createCombinedFilterOperation(filter, query, list -> Combiner.or(list, query.getInitiatingFilterName()));
 			}
 		};
 	}
@@ -84,6 +84,7 @@ public class CommonFilters {
 		for (Q q: query.getQuery()) {
 			args.add(filter.createFilterOperation(new FilterQuery<>(
 				filter.getOwner().orElse(String.valueOf(query.getOwner())), 
+				(filter instanceof NamedFilter) ? ((NamedFilter<?,?>) filter).getName() : "",
 				query.getField(), 
 				q, 
 				query.getMaybeJoins())));
@@ -123,7 +124,7 @@ public class CommonFilters {
 
 			@Override
 			public FilterOperation<?> createFilterOperation(FilterQuery<?, List<Q>> query) throws UnformalizableQuery {
-				return createCombinedFilterOperation(filter, query, Combiner::and);
+				return createCombinedFilterOperation(filter, query, list -> Combiner.and(list, query.getInitiatingFilterName()));
 			}
 		};
 	}
@@ -159,9 +160,10 @@ public class CommonFilters {
 			public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
 				return Combiner.not(filter.createFilterOperation(new FilterQuery<>(
 					filter.getOwner().orElse(String.valueOf(query.getOwner())), 
+					(filter instanceof NamedFilter) ? ((NamedFilter<?,?>) filter).getName() : "",
 					query.getField(), 
 					query.getQuery(), 
-					query.getMaybeJoins())));
+					query.getMaybeJoins())), query.getInitiatingFilterName());
 			}
 		};
 	}
