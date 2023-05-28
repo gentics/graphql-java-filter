@@ -1,6 +1,7 @@
 package com.gentics.graphqlfilter.filter.operation;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * A generic comparison operation implementation.
@@ -8,10 +9,9 @@ import java.util.Collection;
  * @author plyhun
  *
  */
-public class Comparison implements ComparisonOperation {
+public class Comparison extends AbstractOperation<FilterOperand<?>> implements ComparisonOperation {
 
 	private final String operator;
-	private final String initiatingFilterName;
 	private final FilterOperand<?> left;
 	private final FilterOperand<?> right;
 
@@ -23,10 +23,14 @@ public class Comparison implements ComparisonOperation {
 	 * @param right
 	 */
 	public Comparison(String operator, FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName) {
+		this(operator, left, right, initiatingFilterName, Optional.empty());
+	}
+
+	public Comparison(String operator, FilterOperand<?> left, FilterOperand<?> right, String initiatingFilterName, Optional<String> maybeId) {
+		super(maybeId, initiatingFilterName);
 		this.operator = operator;
 		this.left = left;
 		this.right = right;
-		this.initiatingFilterName = initiatingFilterName;
 	}
 
 	@Override
@@ -169,10 +173,5 @@ public class Comparison implements ComparisonOperation {
 	@Override
 	public String toString() {
 		return "Comparison [operator=" + operator + ", left=" + left + ", right=" + right + "]";
-	}
-
-	@Override
-	public String getInitiatingFilterName() {
-		return initiatingFilterName;
 	}
 }

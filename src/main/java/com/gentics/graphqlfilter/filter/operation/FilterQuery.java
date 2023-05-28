@@ -94,7 +94,7 @@ public class FilterQuery<O, Q> {
 	 * 
 	 * @return
 	 */
-	public Optional<Set<Join>> getMaybeJoins() {
+	public Optional<Set<Join>> maybeGetJoins() {
 		return maybeJoins;
 	}
 

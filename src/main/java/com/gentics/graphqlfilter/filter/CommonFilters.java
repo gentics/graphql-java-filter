@@ -87,7 +87,7 @@ public class CommonFilters {
 				(filter instanceof NamedFilter) ? ((NamedFilter<?,?>) filter).getName() : "",
 				query.getField(), 
 				q, 
-				query.getMaybeJoins())));
+				query.maybeGetJoins())).maybeSetFilterId(filter.maybeGetFilterId()));
 		}
 		return combiner.apply(args);
 	}
@@ -163,7 +163,7 @@ public class CommonFilters {
 					(filter instanceof NamedFilter) ? ((NamedFilter<?,?>) filter).getName() : "",
 					query.getField(), 
 					query.getQuery(), 
-					query.getMaybeJoins())), query.getInitiatingFilterName());
+					query.maybeGetJoins())), query.getInitiatingFilterName());
 			}
 		};
 	}

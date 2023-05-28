@@ -34,7 +34,7 @@ public class LimitedSetFilter<T, Q> implements Filter<T, Q> {
 
 	@Override
 	public Predicate<T> createPredicate(Q query) {
-		return item -> mapper.apply(item).equals(query);
+		return item -> item == null ? false : mapper.apply(item).equals(query);
 	}
 
 	@Override

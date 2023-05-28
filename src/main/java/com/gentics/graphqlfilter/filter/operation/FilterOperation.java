@@ -83,6 +83,24 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 	}
 
 	/**
+	 * Get a filter's ID, if available.
+	 * 
+	 * @return
+	 */
+	default Optional<String> maybeGetFilterId() {
+		return Optional.empty();
+	}
+
+	/**
+	 * Set a filter's ID, if supported, NOP otherwise. Returns self.
+	 * 
+	 * @param maybeId
+	 */
+	default FilterOperation<T> maybeSetFilterId(Optional<String> maybeId) {
+		return this;
+	}
+
+	/**
 	 * An empty NOOP operation.
 	 * 
 	 * @return

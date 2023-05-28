@@ -168,7 +168,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Map<String, ?>> query) throws UnformalizableQuery {
 		try {
 			Set<Join> joins = new HashSet<>();
-			query.getMaybeJoins().ifPresent(joins::addAll);
+			query.maybeGetJoins().ifPresent(joins::addAll);
 			List<FilterOperation<?>> operations = query.getQuery().entrySet().stream()
 				.map(entry -> findFilter(entry.getKey())
 						.map(f -> {
@@ -179,7 +179,8 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 												getName(),
 												f.getOwner().map(unused -> entry.getKey()).orElse(query.getField()), 
 												entry.getValue(), 
-												Optional.ofNullable(joins)));
+												Optional.ofNullable(joins)))
+										.maybeSetFilterId(f.maybeGetFilterId());
 							} catch (UnformalizableQuery noop) {
 								// Stream API and checked exceptions are not befriended, so we wrap the origin here...
 								throw new IllegalArgumentException(noop);

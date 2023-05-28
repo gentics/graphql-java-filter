@@ -77,4 +77,13 @@ public interface Filter<T, Q> {
 	default FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
 		throw new UnformalizableQuery(query.getField(), "No operation for this query: " + String.valueOf(query));
 	}
+
+	/**
+	 * Get an ID of this filter, if available.
+	 * 
+	 * @return
+	 */
+	default Optional<String> maybeGetFilterId() {
+		return Optional.empty();
+	}
 }

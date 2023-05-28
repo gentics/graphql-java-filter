@@ -34,6 +34,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	protected final String description;
 	protected final String owner;
 	protected final Optional<Pair<String, JoinPart>> maybeJoin;
+	protected final Optional<String> maybeId;
 
 	/**
 	 * Create a MappedFilter.
@@ -51,6 +52,10 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 		this(owner, name, description, delegate, javaMapper, Optional.empty());
 	}
 
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Optional<String> maybeId) {
+		this(owner, name, description, delegate, javaMapper, Optional.empty(), maybeId);
+	}
+
 	/**
 	 * Create a MappedFilter.
 	 *
@@ -66,7 +71,11 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 *            A pair of owner field / delegate field, formalizing the join relation between an owner and a delegate.
 	 */
 	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Pair<String, JoinPart> join) {
-		this(owner, name, description, delegate, javaMapper, Optional.ofNullable(join));
+		this(owner, name, description, delegate, javaMapper, join, Optional.empty());
+	}
+
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Pair<String, JoinPart> join, Optional<String> maybeId) {
+		this(owner, name, description, delegate, javaMapper, Optional.ofNullable(join), maybeId);
 	}
 
 	/**
@@ -82,10 +91,10 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	 *            the original filter to be mapped
 	 * @param javaMapper
 	 *            A function that maps the predicate input type to another type
-	 * @param join
+	 * @param maybeJoin
 	 *            A possible pair of owner field / delegate field, formalizing the join relation between an owner and a delegate.
 	 */
-	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Optional<Pair<String, JoinPart>> maybeJoin) {
+	public MappedFilter(String owner, String name, String description, Filter<T, Q> delegate, Function<I, T> javaMapper, Optional<Pair<String, JoinPart>> maybeJoin, Optional<String> maybeId) {
 		Objects.requireNonNull(name);
 		Objects.requireNonNull(description);
 		Objects.requireNonNull(javaMapper);
@@ -95,6 +104,7 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 		this.description = description;
 		this.owner = owner;
 		this.maybeJoin = maybeJoin;
+		this.maybeId = maybeId;
 	}
 
 	@Override
@@ -120,14 +130,14 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	@Override
 	public FilterOperation<?> createFilterOperation(FilterQuery<?, Q> query) throws UnformalizableQuery {
 		Set<Join> joins = new HashSet<>(getJoins());
-		query.getMaybeJoins().ifPresent(join -> joins.addAll(join));
+		query.maybeGetJoins().ifPresent(join -> joins.addAll(join));
 		return delegate.createFilterOperation(
 				new FilterQuery<>(
 						getOwner().orElse(String.valueOf(query.getOwner())), 
 						getName(),
 						query.getField(), 
 						query.getQuery(), 
-						Optional.of(joins)));
+						Optional.of(joins))).maybeSetFilterId(maybeGetFilterId());
 	}
 
 	@Override
@@ -155,5 +165,10 @@ public class MappedFilter<I, T, Q> implements FilterField<I, Q> {
 	@Override
 	public GraphQLInputType getSortingType() {
 		return delegate.getSortingType();
+	}
+
+	@Override
+	public Optional<String> maybeGetFilterId() {
+		return maybeId;
 	}
 }

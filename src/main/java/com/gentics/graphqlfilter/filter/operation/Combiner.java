@@ -2,6 +2,7 @@ package com.gentics.graphqlfilter.filter.operation;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -10,9 +11,8 @@ import java.util.stream.Collectors;
  * @author plyhun
  *
  */
-public class Combiner implements CombinerOperation {
+public class Combiner extends AbstractOperation<FilterOperation<?>> implements CombinerOperation {
 
-	private final String initiatingFilterName;
 	private final String operator;
 	private final List<FilterOperation<?>> operands;
 	private final boolean unary;
@@ -24,8 +24,13 @@ public class Combiner implements CombinerOperation {
 	 * @param operands
 	 */
 	public Combiner(String operator, List<FilterOperation<?>> operands, String initiatingFilterName) {
-		this(operator, operands, false, initiatingFilterName);
+		this(operator, operands, false, initiatingFilterName, Optional.empty());
 	}
+
+	public Combiner(String operator, List<FilterOperation<?>> operands, String initiatingFilterName, Optional<String> maybeId) {
+		this(operator, operands, false, initiatingFilterName, maybeId);
+	}
+
 	/**
 	 * Constructor.
 	 * 
@@ -33,10 +38,14 @@ public class Combiner implements CombinerOperation {
 	 * @param operands
 	 */
 	public Combiner(String operator, List<FilterOperation<?>> operands, boolean unary, String initiatingFilterName) {
+		this(operator, operands, unary, initiatingFilterName, Optional.empty());
+	}
+	
+	public Combiner(String operator, List<FilterOperation<?>> operands, boolean unary, String initiatingFilterName, Optional<String> maybeId) {
+		super(maybeId, initiatingFilterName);
 		this.operator = operator;
 		this.operands = operands;
 		this.unary = unary;
-		this.initiatingFilterName = initiatingFilterName;
 	}
 
 	@Override
@@ -92,9 +101,5 @@ public class Combiner implements CombinerOperation {
 	@Override
 	public String toString() {
 		return "Combiner [operator=" + operator + ", operands=" + operands + "]";
-	}
-	@Override
-	public String getInitiatingFilterName() {
-		return initiatingFilterName;
 	}
 }
