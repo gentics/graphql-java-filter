@@ -74,7 +74,16 @@ public class CommonFilters {
 
 			@Override
 			public FilterOperation<?> createFilterOperation(FilterQuery<?, List<Q>> query) throws UnformalizableQuery {
-				return createCombinedFilterOperation(filter, query, list -> Combiner.or(list, query.getInitiatingFilterName()));
+				return createCombinedFilterOperation(filter, query, list -> {
+					// TODO FIXME GraphQL syntax presents wrapping filters as key-value map, which is not always obviously parsed as multi-item list,
+					// but rather as a single-operand inner filter, with a default AND operation. The hack below is to process the wrapping OR op correctly.
+					// The other common combiners tolerate default AND, and so do not require this fix.
+					if (list.size() == 1 && list.get(0).maybeCombination().isPresent()) {
+						return Combiner.or(list.get(0).maybeCombination().get(), query.getInitiatingFilterName());
+					} else {
+						return Combiner.or(list, query.getInitiatingFilterName());
+					}
+				});
 			}
 		};
 	}
