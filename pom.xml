@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gentics.graphqlfilter</groupId>
 	<artifactId>graphql-java-filter</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<parent>
 		<groupId>com.gentics</groupId>
 		<artifactId>maven-parent</artifactId>
