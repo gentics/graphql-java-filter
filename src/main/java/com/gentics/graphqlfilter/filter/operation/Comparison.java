@@ -167,7 +167,7 @@ public class Comparison extends AbstractOperation<FilterOperand<?>> implements C
 	 * @return
 	 */
 	public static final Comparison dummy(boolean shouldSucceed, String initiatingFilterName) {
-		return new Comparison(shouldSucceed ? "=" : "<>", new LiteralOperand<>(1, false), new LiteralOperand<>(1, false), initiatingFilterName);
+		return new Comparison(shouldSucceed ? "IS" : "IS NOT", new LiteralOperand<>("NULL", false), new LiteralOperand<>("NULL", false), initiatingFilterName);
 	}
 
 	@Override
