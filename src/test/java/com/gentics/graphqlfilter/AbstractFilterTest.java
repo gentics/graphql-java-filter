@@ -28,7 +28,7 @@ import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLSchema.newSchema;
 import static org.junit.Assert.assertEquals;
 
-public class AbstractFilterTest {
+public abstract class AbstractFilterTest {
 
 	private GraphQL graphQL;
 
