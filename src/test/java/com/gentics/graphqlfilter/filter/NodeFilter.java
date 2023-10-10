@@ -19,7 +19,7 @@ public class NodeFilter extends MainFilter<Node> {
 	}
 
 	private NodeFilter() {
-		super("NodeFilter", "Filters Nodes", false, Optional.empty());
+		super("NodeFilter", "Filters Nodes", true, Optional.empty());
 	}
 
 	@Override
