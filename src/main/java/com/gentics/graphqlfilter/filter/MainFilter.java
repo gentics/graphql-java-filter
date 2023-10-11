@@ -17,6 +17,7 @@ import com.gentics.graphqlfilter.filter.operation.Combiner;
 import com.gentics.graphqlfilter.filter.operation.FilterOperation;
 import com.gentics.graphqlfilter.filter.operation.FilterQuery;
 import com.gentics.graphqlfilter.filter.operation.UnformalizableQuery;
+import com.gentics.graphqlfilter.util.Lazy;
 
 import graphql.schema.GraphQLInputObjectField;
 import graphql.schema.GraphQLInputType;
@@ -32,9 +33,11 @@ import graphql.schema.GraphQLTypeReference;
  */
 public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedFilter<T, Map<String, ?>> {
 
-	protected Optional<Map<String, FilterField<T, ?>>> maybeFilters = Optional.empty();
-	protected Optional<GraphQLInputType> maybeType = Optional.empty();
-	protected Optional<GraphQLInputType> maybeSortingType = Optional.empty();
+	// We need lazy evaluation here because we need to set the filters and type in the constructor,
+	// without having to fear infinite recursion when reusing a filter in itself.
+	private final Lazy<Map<String, FilterField<T, ?>>> filters;
+	private final Lazy<GraphQLInputType> type;
+	private final Lazy<GraphQLInputType> sortingType;
 
 	private final Optional<String> ownerType;
 	private final String name;
@@ -93,6 +96,39 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 	 *            an owner name required for the filter formalizing
 	 */
 	public MainFilter(String name, String description, boolean addCommonFilters, Optional<String> ownerType) {
+		this.filters = new Lazy<>(() -> {
+			List<FilterField<T, ?>> commonFilters = addCommonFilters ? CommonFilters.createFor(this, GraphQLTypeReference.typeRef(getName())) : Collections.emptyList();
+			List<FilterField<T, ?>> newFilters = getFilters();
+
+			return Stream.concat(
+				commonFilters.stream(),
+				newFilters.stream()).collect(Collectors.toMap(FilterField::getName, Function.identity()));
+		});
+
+		this.type = new Lazy<>(() -> newInputObject()
+			.name(getName())
+			.description(description)
+			.fields(getBuiltFilters().values().stream().map(FilterField::toObjectField).collect(Collectors.toList()))
+			.build());
+
+		this.sortingType = new Lazy<>(() -> {
+			List<GraphQLInputObjectField> fields = getBuiltFilters().values().stream()
+					.filter(Filter::isSortable)
+					.map(FilterField::toSortableObjectField)
+					.collect(Collectors.toList());
+			GraphQLInputType ret;
+			if (fields.size() > 0) {
+				ret = newInputObject()
+						.name(getSortingName())
+						.description(description)
+						.fields(fields)
+						.build();
+			} else {
+				ret = Sorting.getSortingEnumType();
+			}
+			return ret;
+		});
+
 		this.ownerType = ownerType;
 		this.name = name;
 		this.description = description;
@@ -120,37 +156,12 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 
 	@Override
 	public GraphQLInputType getType() {
-		return maybeType.orElseGet(() -> {
-			GraphQLInputType ret = newInputObject()
-					.name(getName())
-					.description(description)
-					.fields(getBuiltFilters().values().stream().map(FilterField::toObjectField).collect(Collectors.toList()))
-					.build();
-			maybeType = Optional.of(ret);
-			return ret;
-		});
+		return type.get();
 	}
 
 	@Override
 	public GraphQLInputType getSortingType() {
-		return maybeSortingType.orElseGet(() -> {
-			List<GraphQLInputObjectField> fields = getBuiltFilters().values().stream()
-					.filter(Filter::isSortable)
-					.map(FilterField::toSortableObjectField)
-					.collect(Collectors.toList());
-			GraphQLInputType ret;
-			if (fields.size() > 0) {
-				ret = newInputObject()
-						.name(getSortingName())
-						.description(description)
-						.fields(fields)
-						.build();
-			} else {
-				ret = Sorting.getSortingEnumType();
-			}
-			maybeSortingType = Optional.of(ret);
-			return ret;
-		});
+		return sortingType.get();
 	}
 
 	@Override
@@ -199,7 +210,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 
 	@SuppressWarnings("unchecked")
 	public Optional<Filter<T, Object>> findFilter(String key) {
-		return Optional.ofNullable((Filter<T, Object>) maybeFilters.get().get(key));
+		return Optional.ofNullable((Filter<T, Object>) filters.get().get(key));
 	}
 
 	@Override
@@ -208,17 +219,7 @@ public abstract class MainFilter<T> implements Filter<T, Map<String, ?>>, NamedF
 	}
 
 	public Map<String, FilterField<T, ?>> getBuiltFilters() {
-		return maybeFilters.orElseGet(() -> {
-			List<FilterField<T, ?>> commonFilters = addCommonFilters ? CommonFilters.createFor(this, GraphQLTypeReference.typeRef(getName())) : Collections.emptyList();
-			List<FilterField<T, ?>> newFilters = getFilters();
-
-			Map<String, FilterField<T, ?>> ret = Stream.concat(
-				commonFilters.stream(),
-				newFilters.stream()).collect(Collectors.toMap(FilterField::getName, Function.identity()));
-			
-			maybeFilters = Optional.of(ret);
-			return ret;
-		});
+		return filters.get();
 	}
 
 	public Optional<String> getMaybeOwnerType() {

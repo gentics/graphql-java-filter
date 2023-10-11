@@ -28,50 +28,44 @@ import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLSchema.newSchema;
 import static org.junit.Assert.assertEquals;
 
-public class AbstractFilterTest {
+public abstract class AbstractFilterTest {
 
 	private GraphQL graphQL;
 
-	protected final List<Node> testData;
-
-	public AbstractFilterTest() {
-		testData = Arrays.asList(
+	public final static List<Node> testData = Arrays.asList(
 			new Node("e018fa14-39ed-431c-b09d-b27097b48b85", Schemas.FOLDER,
-				DateFilter.parseDate("2018-03-01").toEpochMilli(),
-				"de", "images", true, 10d),
-			new Node("1f9c42ed-506d-481d-b31e-1a9466e31a81", Schemas.CONTENT,
-				DateFilter.parseDate("2018-03-02").toEpochMilli(),
-				"en", "Tree: Pine", true, 20d),
-			new Node("e240763a-089f-4a25-82bd-d94d63fd45da", Schemas.CONTENT,
-				DateFilter.parseDate("2018-03-05T00:30:00+02:00").toEpochMilli(),
-				"en", "Tree: Oak", false, 30.5),
-			new Node("9352efb8-9546-4239-bde5-c85fe9163d8e", Schemas.CONTENT,
-				DateFilter.parseDate("2018-03-05T00:30:00+01:00").toEpochMilli(),
-				"en", "Fruit: Apple", true, 0d),
-			new Node(null, Schemas.CONTENT, null, null, null, null, null));
-	}
+					DateFilter.parseDate("2018-03-01").toEpochMilli(),
+					"de", "images", true, 10d),
+				new Node("1f9c42ed-506d-481d-b31e-1a9466e31a81", Schemas.CONTENT,
+					DateFilter.parseDate("2018-03-02").toEpochMilli(),
+					"en", "Tree: Pine", true, 20d),
+				new Node("e240763a-089f-4a25-82bd-d94d63fd45da", Schemas.CONTENT,
+					DateFilter.parseDate("2018-03-05T00:30:00+02:00").toEpochMilli(),
+					"en", "Tree: Oak", false, 30.5),
+				new Node("9352efb8-9546-4239-bde5-c85fe9163d8e", Schemas.CONTENT,
+					DateFilter.parseDate("2018-03-05T00:30:00+01:00").toEpochMilli(),
+					"en", "Fruit: Apple", true, 0d),
+				new Node(null, Schemas.CONTENT, null, null, null, null, null));
 
-	@Before
-	public void setupGraphQl() {
-
+	public final static GraphQL buildGraphQL() {
 		GraphQLObjectType nodeType = GraphQLObjectType.newObject()
-			.name("node")
-			.field(GraphQLFieldDefinition.newFieldDefinition()
-				.name("uuid")
-				.type(GraphQLID)
-				.dataFetcher(x -> x.<Node>getSource().getUuid())
-				.build())
-			.field(GraphQLFieldDefinition.newFieldDefinition()
-				.name("name")
-				.type(GraphQLString)
-				.dataFetcher(x -> x.<Node>getSource().getName())
-				.build())
-			.field(GraphQLFieldDefinition.newFieldDefinition()
-				.name("published")
-				.type(GraphQLBoolean)
-				.dataFetcher(x -> x.<Node>getSource().isPublished())
-				.build())
-			.build();
+				.name("node")
+				.field(GraphQLFieldDefinition.newFieldDefinition()
+					.name("uuid")
+					.type(GraphQLID)
+					.dataFetcher(x -> x.<Node>getSource().getUuid())
+					.build())
+				.field(GraphQLFieldDefinition.newFieldDefinition()
+					.name("name")
+					.type(GraphQLString)
+					.dataFetcher(x -> x.<Node>getSource().getName())
+					.build())
+				.field(GraphQLFieldDefinition.newFieldDefinition()
+					.name("published")
+					.type(GraphQLBoolean)
+					.dataFetcher(x -> x.<Node>getSource().isPublished())
+					.build())
+				.build();
 
 		GraphQLObjectType root = GraphQLObjectType.newObject()
 			.name("root")
@@ -88,7 +82,12 @@ public class AbstractFilterTest {
 				.build())
 			.build();
 
-		this.graphQL = GraphQL.newGraphQL(newSchema().query(root).build()).build();
+		return GraphQL.newGraphQL(newSchema().query(root).build()).build();
+	}
+
+	@Before
+	public void setupGraphQl() {
+		this.graphQL = buildGraphQL();
 	}
 
 	protected ExecutionResult queryNodes(String query) {
