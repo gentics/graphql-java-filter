@@ -66,6 +66,11 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.4.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -83,6 +88,8 @@
 				<version>3.0.0-M5</version>
 				<configuration>
 					<skip>${skip.unit.tests}</skip>
+					<!-- Some tests (like MultithreadingTest) must be run in a fresh JVM, so we do not reuse forks -->
+					<reuseForks>false</reuseForks>
 				</configuration>
 			</plugin>
 		</plugins>
