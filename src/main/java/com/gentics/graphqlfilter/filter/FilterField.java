@@ -101,10 +101,28 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 	 *            The Java type mapped from the GraphQL input type
 	 */
 	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, Optional<Function<FilterQuery<?, Q>, FilterOperation<?>>> createFilterDefinition, boolean checkNullValue) {
-		return create(name, description, type, createPredicate, createFilterDefinition, checkNullValue, Optional.empty());
+		return create(name, description, type, createPredicate, createFilterDefinition, checkNullValue, false, Optional.empty(), Optional.empty());
 	}
+
+	/**
+	 * A helper method to easily create a FilterField with an optional null check on a value, and sortability.
+	 * 
+	 * @param <T> The predicate input type
+	 * @param <Q> The Java type mapped from the GraphQL input type
+	 * @param name name of the filter
+	 * @param description description of the filter
+	 * @param type GraphQl type of the filter
+	 * @param createPredicate a function that creates a predicate based on the filter the user defined
+	 * @param createFilterDefinition an optional function that creates a native filter definition.
+	 * @param checkNullValue should value be null-checked?
+	 * @param isSortable is this field sortable?
+	 * @param maybeOwner an optional native filter owner value
+	 * @param maybeSortingType an optional custom sorting type
+	 * @return
+	 */
 	static <T, Q> FilterField<T, Q> create(String name, String description, GraphQLInputType type, Function<Q, Predicate<T>> createPredicate, 
-					Optional<Function<FilterQuery<?, Q>, FilterOperation<?>>> createFilterDefinition, boolean checkNullValue, Optional<String> maybeOwner) {
+					Optional<Function<FilterQuery<?, Q>, FilterOperation<?>>> createFilterDefinition, boolean checkNullValue, boolean isSortable,
+					Optional<String> maybeOwner, Optional<GraphQLInputType> maybeSortingType) {
 
 		return new FilterField<T, Q>() {
 			@Override
@@ -139,12 +157,17 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 
 			@Override
 			public boolean isSortable() {
-				return false;
+				return isSortable;
 			}
 
 			@Override
 			public Optional<String> getOwner() {
 				return maybeOwner;
+			}
+
+			@Override
+			public GraphQLInputType getSortingType() {
+				return maybeSortingType.orElseGet(() -> FilterField.super.getSortingType());
 			}
 		};
 	}
