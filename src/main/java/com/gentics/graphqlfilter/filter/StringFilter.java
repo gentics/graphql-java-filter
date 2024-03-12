@@ -33,7 +33,7 @@ public class StringFilter extends MainFilter<String> {
 	}
 
 	private StringFilter(Optional<String> ownerType) {
-		super("StringFilter", "Filters Strings", false, ownerType);
+		super("StringFilter", "Filters Strings", true, ownerType);
 	}
 
 	@Override

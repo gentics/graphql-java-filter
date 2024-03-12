@@ -35,7 +35,7 @@ public class NumberFilter extends MainFilter<Number> {
 	}
 
 	private NumberFilter() {
-		super("NumberFilter", "Filters numbers", false, Optional.empty());
+		super("NumberFilter", "Filters numbers", true, Optional.empty());
 	}
 
 	private static GraphQLInputType closeToType = GraphQLInputObjectType.newInputObject()
