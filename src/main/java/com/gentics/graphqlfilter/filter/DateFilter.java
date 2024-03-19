@@ -46,7 +46,7 @@ public class DateFilter extends MainFilter<Long> {
 	}
 
 	public DateFilter(String owner) {
-		super("DateFilter", "Filters Dates", false, Optional.ofNullable(owner));
+		super("DateFilter", "Filters Dates", true, Optional.ofNullable(owner));
 	}
 
 	@Override
