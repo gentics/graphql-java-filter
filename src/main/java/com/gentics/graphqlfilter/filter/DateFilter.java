@@ -13,7 +13,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -57,7 +56,7 @@ public class DateFilter extends MainFilter<Long> {
 				dateTimePredicate(Instant::equals),
 				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate), query.getInitiatingFilterName()))),
 			FilterField.create("notEquals", "Compares the date to the given ISO-8601 date for inequality.", GraphQLString,
-					dateTimePredicate((i1, i2) -> !Objects.equals(i1, i2)),
+					negate(dateTimePredicate(Instant::equals)),
 					Optional.of(query -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(true, DateFilter::parseDate), query.getInitiatingFilterName()))),
 			FilterField.create("oneOf", "Tests if the date is equal to one of the given ISO-8601 dates.", GraphQLList.list(GraphQLString),
 				this::oneOf, 
@@ -83,6 +82,10 @@ public class DateFilter extends MainFilter<Long> {
 			Instant queryDate = parseDate(query);
 			return nullablePredicate(date -> predicate.test(parseLong(date), queryDate));
 		};
+	}
+
+	private Function<String, Predicate<Long>> negate(Function<String, Predicate<Long>> predicate) {
+		return query -> predicate.apply(query).negate();
 	}
 
 	private Predicate<Long> oneOf(List<String> query) {

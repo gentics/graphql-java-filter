@@ -7,4 +7,14 @@
   }) {
     name
   }
+  notNodes:nodes(filter: {
+    not: {
+      price: {closeTo: {
+        value: 30,
+        maxDifference: 0.5
+      }}
+    }
+  }) {
+    name
+  }
 }

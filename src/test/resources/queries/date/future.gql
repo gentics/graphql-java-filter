@@ -4,4 +4,11 @@
   }) {
     name
   }
+  notNodes:nodes(filter: {
+    not: {
+      created: {isFuture: true}
+    }
+  }) {
+    name
+  }
 }

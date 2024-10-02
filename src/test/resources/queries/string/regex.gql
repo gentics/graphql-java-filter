@@ -2,7 +2,13 @@
   nodes(filter: {
     name: {regex: "^Tree:"}
   }) {
-    uuid
+    name
+  }
+  notNodes:nodes(filter: {
+    not: {
+      name: {regex: "^Tree:"}
+    }
+  }) {
     name
   }
 }

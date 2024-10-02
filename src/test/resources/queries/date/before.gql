@@ -4,4 +4,11 @@
   }) {
     name
   }
+  notNodes:nodes(filter: {
+    not: {
+      created: {before: "2018-03-02"}
+    }
+  }) {
+    name
+  }
 }
