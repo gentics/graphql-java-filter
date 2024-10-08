@@ -15,8 +15,10 @@ import graphql.schema.GraphQLObjectType;
 import org.junit.Before;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,7 @@ import static graphql.Scalars.GraphQLString;
 import static graphql.schema.GraphQLArgument.newArgument;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
 import static graphql.schema.GraphQLSchema.newSchema;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractFilterTest {
@@ -112,7 +115,23 @@ public abstract class AbstractFilterTest {
 	}
 
 	protected List<Map<String, ?>> queryNodesAsList(QueryFile query) {
+		return queryAsList(query, false);
+	}
+
+	protected List<Map<String, ?>> queryAsList(QueryFile query, boolean not) {
 		Map<String, List<Map<String, ?>>> result = queryNodes(query).getData();
-		return result.get("nodes");
+		return result.get(not ? "notNodes" : "nodes");
+	}
+
+	protected void assertNames(List<Map<String, ?>> result, boolean not, String... expected) {
+		if (not) {
+			Set<String> notExpected = new HashSet<>(Arrays.asList(expected));
+			List<String> list = testData.stream().map(m -> m.getName()).filter(name -> !notExpected.contains(name)).collect(Collectors.toList());
+			expected = list.toArray(new String[list.size()]);
+		}
+
+		List<String> values = result.stream().map(m -> m.get("name")).map(v -> String.class.cast(v))
+				.collect(Collectors.toList());
+		assertThat(values).as("Expected names").containsOnly(expected);
 	}
 }

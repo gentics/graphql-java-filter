@@ -60,11 +60,11 @@ public class NumberFilter extends MainFilter<Number> {
 			FilterField.isNull(),
 			FilterField.<Number, Number>create("equals",
 				"Compares two numbers for equality. Be careful when comparing floating point numbers, they might be not exact. In that case, use closeTo instead.",
-				GraphQLBigDecimal, query -> val -> val != null && fromNumber(val).compareTo(fromNumber(query)) == 0,
+				GraphQLBigDecimal, query -> val -> nullSafeCompare(val, query),
 				Optional.of(query -> Comparison.eq(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false), query.getInitiatingFilterName()))),
 			FilterField.<Number, Number>create("notEquals",
 					"Compares two numbers for inequality. Be careful when comparing floating point numbers, they might be not exact. In that case, use closeTo instead.",
-					GraphQLBigDecimal, query -> val -> val != null && fromNumber(val).compareTo(fromNumber(query)) != 0,
+					GraphQLBigDecimal, query -> val -> !nullSafeCompare(val, query),
 					Optional.of(query -> Comparison.ne(query.makeFieldOperand(Optional.empty()), query.makeValueOperand(false), query.getInitiatingFilterName()))),
 			FilterField.<Number, List<Number>>create("oneOf", "Tests if the number is equal to one of the given numbers",
 				GraphQLList.list(GraphQLBigDecimal), query -> val -> val != null && query.stream().anyMatch(v -> fromNumber(val).compareTo(fromNumber(v)) == 0),
@@ -102,6 +102,22 @@ public class NumberFilter extends MainFilter<Number> {
             return BigDecimal.valueOf(number.longValue());
         }
         return BigDecimal.valueOf(number.doubleValue());
+	}
+
+	/**
+	 * Do a null-safe comparison of two given numbers. If both are null, they are considered equal.
+	 * @param number1 first number
+	 * @param number2 second number
+	 * @return true, iff the numbers are equal (or both null), false otherwise
+	 */
+	public static boolean nullSafeCompare(Number number1, Number number2) {
+		if (number1 == null) {
+			return number2 == null;
+		} else if (number2 == null) {
+			return false;
+		} else {
+			return fromNumber(number1).compareTo(fromNumber(number2)) == 0;
+		}
 	}
 
 	private static Predicate<BigDecimal> closeTo(Map<String, Number> query) {

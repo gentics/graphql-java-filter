@@ -4,4 +4,11 @@
   }) {
     name
   }
+  notNodes:nodes(filter: {
+    not: {
+      price: {oneOf: [10, 20]}
+    }
+  }) {
+    name
+  }
 }

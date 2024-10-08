@@ -1,69 +1,67 @@
 package com.gentics.graphqlfilter;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.gentics.graphqlfilter.util.QueryFile;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-
-public class DateFilterTest extends AbstractFilterTest {
+public class DateFilterTest extends AbstractNegatingFilterTest {
 
 	@Test
 	public void testEquals() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "equals"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "equals"), not);
 
-		assertEquals(1, result.size());
-		assertEquals("images", result.get(0).get("name"));
+		assertNames(result, not, "images");
+	}
+
+	@Test
+	public void testNotEquals() {
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "notEquals"), not);
+
+		assertNames(result, not, "Tree: Pine", "Tree: Oak", "Fruit: Apple", null);
 	}
 
 	@Test
 	public void testBefore() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "before"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "before"), not);
 
-		assertEquals(1, result.size());
-		assertEquals("images", result.get(0).get("name"));
+		assertNames(result, not, "images");
 	}
 
 	@Test
 	public void testAfter() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "after"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "after"), not);
 
-		assertEquals(2, result.size());
-		assertEquals("Tree: Oak", result.get(0).get("name"));
-		assertEquals("Fruit: Apple", result.get(1).get("name"));
+		assertNames(result, not, "Tree: Oak", "Fruit: Apple");
 	}
 
 	@Test
 	public void testBetween() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "between"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "between"), not);
 
-		assertEquals(1, result.size());
-		assertEquals("Tree: Pine", result.get(0).get("name"));
+		assertNames(result, not, "Tree: Pine");
 	}
 
 	@Test
 	public void testFuture() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "future"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "future"), not);
 
-		assertEquals(0, result.size());
+		assertNames(result, not);
 	}
 
 	@Test
 	public void testPast() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "past"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "past"), not);
 
-		assertEquals(4, result.size());
+		assertNames(result, not, "images", "Tree: Pine", "Tree: Oak", "Fruit: Apple");
 	}
 
 	@Test
 	public void testFormat() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("date", "format"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("date", "format"), not);
 
-		assertEquals(2, result.size());
-		assertEquals("Tree: Oak", result.get(0).get("name"));
-		assertEquals("Fruit: Apple", result.get(1).get("name"));
+		assertNames(result, not, "Tree: Oak", "Fruit: Apple");
 	}
 }

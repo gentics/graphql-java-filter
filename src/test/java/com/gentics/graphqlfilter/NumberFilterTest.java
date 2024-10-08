@@ -1,87 +1,74 @@
 package com.gentics.graphqlfilter;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.gentics.graphqlfilter.util.QueryFile;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-
-public class NumberFilterTest extends AbstractFilterTest {
+public class NumberFilterTest extends AbstractNegatingFilterTest {
 
 	@Test
 	public void testEquals() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "equals"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "equals"), not);
 
-		assertEquals(1, result.size());
-		assertEquals("images", result.get(0).get("name"));
+		assertNames(result, not, "images");
+	}
+
+	@Test
+	public void testNotEquals() {
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "notEquals"), not);
+
+		assertNames(result, not, "Tree: Pine", "Tree: Oak", "Fruit: Apple", null);
 	}
 
 	@Test
 	public void testOneOf() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "oneOf"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "oneOf"), not);
 
-		assertEquals(2, result.size());
-		assertEquals("images", result.get(0).get("name"));
-		assertEquals("Tree: Pine", result.get(1).get("name"));
+		assertNames(result, not, "images", "Tree: Pine");
 	}
 
 	@Test
 	public void testGT() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "gt"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "gt"), not);
 
-		assertEquals(2, result.size());
-		assertEquals("Tree: Pine", result.get(0).get("name"));
-		assertEquals("Tree: Oak", result.get(1).get("name"));
+		assertNames(result, not, "Tree: Pine", "Tree: Oak");
 	}
 
 	@Test
 	public void testGTE() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "gte"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "gte"), not);
 
-		assertEquals(2, result.size());
-		assertEquals("Tree: Pine", result.get(0).get("name"));
-		assertEquals("Tree: Oak", result.get(1).get("name"));
+		assertNames(result, not, "Tree: Pine", "Tree: Oak");
 	}
 
 	@Test
 	public void testLT() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "lt"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "lt"), not);
 
-		assertEquals(3, result.size());
-		assertEquals("images", result.get(0).get("name"));
-		assertEquals("Tree: Pine", result.get(1).get("name"));
-		assertEquals("Fruit: Apple", result.get(2).get("name"));
+		assertNames(result, not, "images", "Tree: Pine", "Fruit: Apple");
 	}
 
 	@Test
 	public void testLTE() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "lte"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "lte"), not);
 
-		assertEquals(4, result.size());
-		assertEquals("images", result.get(0).get("name"));
-		assertEquals("Tree: Pine", result.get(1).get("name"));
-		assertEquals("Tree: Oak", result.get(2).get("name"));
-		assertEquals("Fruit: Apple", result.get(3).get("name"));
+		assertNames(result, not, "images", "Tree: Pine", "Tree: Oak", "Fruit: Apple");
 	}
 
 	@Test
 	public void testDivisible() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "divisible"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "divisible"), not);
 
-		assertEquals(3, result.size());
-		assertEquals("images", result.get(0).get("name"));
-		assertEquals("Tree: Pine", result.get(1).get("name"));
-		assertEquals("Fruit: Apple", result.get(2).get("name"));
+		assertNames(result, not, "images", "Tree: Pine", "Fruit: Apple");
 	}
 
 	@Test
 	public void testCloseTo() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("number", "closeTo"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("number", "closeTo"), not);
 
-		assertEquals(1, result.size());
-		assertEquals("Tree: Oak", result.get(0).get("name"));
+		assertNames(result, not, "Tree: Oak");
 	}
 }
