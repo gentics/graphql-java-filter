@@ -4,4 +4,11 @@
   }) {
     name
   }
+  notNodes:nodes(filter: {
+    not: {
+      price: {divisibleBy: 10}
+    }
+  }) {
+    name
+  }
 }

@@ -10,4 +10,17 @@
   }) {
     name
   }
+  notNodes:nodes(filter: {
+    not: {
+      and: [
+        {created: {after: "2018-03-04T00:00:00Z"}},
+        {created: {after: "2018-03-04T00:30:00"}},
+        {created: {after: "2018-03-04"}},
+        {created: {after: "2018-03-04T00:30:00+02:00"}},
+        {created: {after: "2018-03-04T00:30:00+02:00[Europe/Vienna]"}}
+      ]
+    }
+  }) {
+    name
+  }
 }

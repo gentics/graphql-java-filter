@@ -4,4 +4,11 @@
   }) {
     name
   }
+  notNodes:nodes(filter: {
+    not: {
+      price: {gte: 20}
+    }
+  }) {
+    name
+  }
 }

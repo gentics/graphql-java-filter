@@ -1,14 +1,16 @@
 {
   nodes(filter: {
-    created: {equals: "2018-03-01"}
+    published: false
   }) {
     name
+    published
   }
   notNodes:nodes(filter: {
     not: {
-      created: {equals: "2018-03-01"}
+      published: false
     }
   }) {
     name
+    published
   }
 }

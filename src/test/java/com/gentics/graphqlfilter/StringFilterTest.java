@@ -1,35 +1,39 @@
 package com.gentics.graphqlfilter;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.gentics.graphqlfilter.util.QueryFile;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-
-public class StringFilterTest extends AbstractFilterTest {
+public class StringFilterTest extends AbstractNegatingFilterTest {
 
 	@Test
 	public void testEquals() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "equals"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("string", "equals"), not);
 
-		assertEquals(1, result.size());
-		assertEquals("e018fa14-39ed-431c-b09d-b27097b48b85", result.get(0).get("uuid"));
+		assertNames(result, not, "images");
+	}
+
+	@Test
+	public void testNotEquals() {
+		List<Map<String, ?>> result = queryAsList(new QueryFile("string", "notEquals"), not);
+
+		assertNames(result, not, "Tree: Pine", "Tree: Oak", "Fruit: Apple", null);
 	}
 
 	@Test
 	public void testOneOf() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "oneOf"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("string", "oneOf"), not);
 
-		assertEquals(2, result.size());
+		assertNames(result, not, "images", "Tree: Pine");
 	}
 
 	@Test
 	public void testRegex() {
-		List<Map<String, ?>> result = queryNodesAsList(new QueryFile("string", "regex"));
+		List<Map<String, ?>> result = queryAsList(new QueryFile("string", "regex"), not);
 
-		assertEquals(2, result.size());
+		assertNames(result, not, "Tree: Oak", "Tree: Pine");
 	}
 }

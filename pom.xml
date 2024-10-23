@@ -4,14 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gentics.graphqlfilter</groupId>
 	<artifactId>graphql-java-filter</artifactId>
-	<version>3.0.4</version>
+	<version>3.0.6</version>
 	<parent>
 		<groupId>com.gentics</groupId>
 		<artifactId>maven-parent</artifactId>
 		<version>2.0.16</version>
 	</parent>
 	<properties>
-		<graphql.version>20.0</graphql.version>
+		<graphql.version>21.5</graphql.version>
+		<graphql.extended.scalars.version>21.0</graphql.extended.scalars.version>
+		<commons-io.version>2.17.0</commons-io.version>
 	</properties>
 	<developers>
 		<developer>
@@ -53,12 +55,12 @@
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>graphql-java-extended-scalars</artifactId>
-			<version>${graphql.version}</version>
+			<version>${graphql.extended.scalars.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
+			<version>${commons-io.version}</version>
 		</dependency>
 		<!-- Test dependencies -->
 		<dependency>
@@ -96,15 +98,28 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>maven.gentics.com</id>
-			<name>Gentics Maven Repository</name>
-			<url>https://maven.gentics.com/maven2</url>
+			<id>gentics.nexus.releases-oss</id>
+			<name>Gentics Nexus OSS Maven Repository</name>
+			<url>https://repo.gentics.com/repository/maven-releases-oss/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>gentics.nexus.releases-oss</id>
+			<name>Gentics Nexus OSS Maven Repository</name>
+			<url>https://repo.gentics.com/repository/maven-releases-oss/</url>
+		</repository>
+		<snapshotRepository>
+			<id>gentics.nexus.snapshots</id>
+			<name>Gentics Snapshots Repository</name>
+			<url>https://repo.gentics.com/repository/maven-snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 </project>
