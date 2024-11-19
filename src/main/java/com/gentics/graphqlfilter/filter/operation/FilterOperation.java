@@ -132,6 +132,27 @@ public interface FilterOperation<T extends Sqlable> extends Sqlable {
 			public String getInitiatingFilterName() {
 				return "";
 			}
+
+			@Override
+			public String toString() {
+				return "NOOP";
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (this == obj) {
+					return true;
+				}
+				if (!(obj instanceof FilterOperation)) {
+					return false;
+				}
+				return this.toString().equals(obj.toString());
+			}
+
+			@Override
+			public int hashCode() {
+				return toString().hashCode();
+			}
 		};
 	}
 }
