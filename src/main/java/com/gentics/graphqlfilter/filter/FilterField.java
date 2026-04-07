@@ -132,7 +132,7 @@ public interface FilterField<T, Q> extends Filter<T, Q> {
 
 			@Override
 			public String getDescription() {
-				return description;
+				return description + createFilterDefinition.map(hasDefinition -> " Can be used in a SQL native filtering.").orElse("SQL native filtering is NOT supported.");
 			}
 
 			@Override
